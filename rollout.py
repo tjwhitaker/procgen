@@ -355,22 +355,6 @@ def rollout(agent,
             video_dir=None):
     policy_agent_mapping = default_policy_agent_mapping
 
-    # Create ensemble here
-    #######################################
-
-    print(agent.get_policy().get_weights().keys())
-    weights = agent.get_policy().get_weights()
-
-    for key in weights.keys():
-        for weight in np.nditer(weights[key], op_flags=['readwrite']):
-            if random() < 0.1:
-                weight[...] = 0
-
-    agent.get_policy().set_weights(weights)
-    print(agent.get_policy().get_weights())
-
-    ########################################
-
     if saver is None:
         saver = RolloutSaver()
 
