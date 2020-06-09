@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from algorithms import CUSTOM_ALGORITHMS
 import argparse
 import collections
 import copy
@@ -9,9 +8,6 @@ import os
 from pathlib import Path
 import pickle
 import shelve
-
-import numpy as np
-from random import random
 
 import gym
 import gym.wrappers
@@ -48,9 +44,10 @@ python ./rollout.py \
 """
 
 # Register all necessary assets in tune registries
-load_envs(os.getcwd())  # Load envs
-load_models(os.getcwd())  # Load models
+load_envs(os.getcwd()) # Load envs
+load_models(os.getcwd()) # Load models
 # Load custom algorithms
+from algorithms import CUSTOM_ALGORITHMS
 load_algorithms(CUSTOM_ALGORITHMS)
 
 
@@ -355,22 +352,6 @@ def rollout(agent,
             video_dir=None):
     policy_agent_mapping = default_policy_agent_mapping
 
-    # Create ensemble here
-    #######################################
-
-    print(agent.get_policy().get_weights().keys())
-    weights = agent.get_policy().get_weights()
-
-    for key in weights.keys():
-        for weight in np.nditer(weights[key], op_flags=['readwrite']):
-            if random() < 0.1:
-                weight[...] = 0
-
-    agent.get_policy().set_weights(weights)
-    print(agent.get_policy().get_weights())
-
-    ########################################
-
     if saver is None:
         saver = RolloutSaver()
 
@@ -471,8 +452,7 @@ def rollout(agent,
             steps += 1
             obs = next_obs
         saver.end_rollout()
-        print("Episode #{}: reward: {} steps: {}".format(
-            episodes, reward_total, episode_steps))
+        print("Episode #{}: reward: {} steps: {}".format(episodes, reward_total, episode_steps))
         if done:
             episodes += 1
 
