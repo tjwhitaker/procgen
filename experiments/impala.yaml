@@ -1,6 +1,6 @@
-procgen-apex:
+procgen-impala:
   env: procgen_env_wrapper # Change this at your own risk :D
-  run: APEX
+  run: IMPALA
   # Can be replaced by any of the available agents as described at :
   # https://github.com/ray-project/ray/blob/master/rllib/agents/registry.py#L103
   #
@@ -16,7 +16,7 @@ procgen-apex:
   # === Stop Conditions ===
   ################################################
   stop:
-    timesteps_total: 1
+    timesteps_total: 8000000
 
   ################################################
   # === Settings for Checkpoints ===
@@ -46,7 +46,7 @@ procgen-apex:
     # === Environment Settings ===
     ################################################
     ################################################
-    ignore_worker_failures: True
+    ignore_worker_failures: False
     log_sys_usage: True
 
     ################################################
@@ -63,16 +63,16 @@ procgen-apex:
     # === Settings for Rollout Worker processes ===
     ################################################
     ################################################
-    num_workers: 2
-    num_envs_per_worker: 8
+    num_workers: 6
+    num_envs_per_worker: 16
 
     ################################################
     ################################################
     # === Advanced Resource Settings ===
     ################################################
     ################################################
-    num_cpus_per_worker: 0.5
-    num_gpus_per_worker: 0
+    num_cpus_per_worker: 1
+    num_gpus_per_worker: 0.1
     num_cpus_for_driver: 1
 
     ################################################
@@ -80,14 +80,24 @@ procgen-apex:
     # === Settings for the Trainer process ===
     ################################################
     ################################################
-    num_gpus: 1
+    num_gpus: 0.3
+
     ################################################
     ################################################
     # === Exploration Settings ===
     ################################################
     ################################################
+    explore: True,
+    exploration_config:
+      type: "StochasticSampling"
+
     ################################################
     ################################################
     # === Advanced Rollout Settings ===
     ################################################
     ################################################
+    observation_filter: "NoFilter"
+    synchronize_filters: True
+    compress_observations: False
+    timesteps_per_iteration: 0
+    seed: null
