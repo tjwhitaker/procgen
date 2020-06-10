@@ -1,4 +1,4 @@
-procgen-az:
+procgen-alphazero:
   env: procgen_env_wrapper # Change this at your own risk :D
   run: contrib/AlphaZero
   # Can be replaced by any of the available agents as described at :
