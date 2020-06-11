@@ -74,7 +74,6 @@ procgen-apex:
     num_cpus_per_worker: 0.5
     num_gpus_per_worker: 0
     num_cpus_for_driver: 1
-
     ################################################
     ################################################
     # === Settings for the Trainer process ===
