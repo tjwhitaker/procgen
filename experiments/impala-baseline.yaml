@@ -59,7 +59,7 @@ procgen-ppo:
         # The GAE(lambda) parameter.
         lambda: 0.95
         # The default learning rate.
-        lr: 2.5e-4
+        lr: 5.0e-4
         # Number of SGD iterations in each outer loop (i.e., number of epochs to
         # execute per train batch).
         num_sgd_iter: 4
@@ -76,7 +76,7 @@ procgen-ppo:
         kl_target: 0.01
         # Coefficient of the value function loss. IMPORTANT: you must tune this if
         # you set vf_share_layers: True.
-        vf_loss_coeff: 1.0
+        vf_loss_coeff: 0.5
         # Coefficient of the entropy regularizer.
         entropy_coeff: 0.01
         # PPO clip parameter.
@@ -90,7 +90,7 @@ procgen-ppo:
         observation_filter: NoFilter
         # Share layers for value function. If you set this to True, it's important
         # to tune vf_loss_coeff.
-        vf_share_layers: False
+        vf_share_layers: True
         # Number of steps after which the episode is forced to terminate. Defaults
         # to `env.spec.max_episode_steps` (if present) for Gym envs.
         horizon: null
