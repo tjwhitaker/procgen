@@ -75,8 +75,6 @@ class ImpalaCNN(TFModelV2):
         # explicit cast to float32 needed in eager
         obs = tf.cast(input_dict["obs"], tf.float32)
 
-        variables = self.trainable_variables()
-
         print(self.base_model.get_weights())
 
         logits, self._value = self.base_model(obs)
