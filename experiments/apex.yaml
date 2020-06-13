@@ -1,36 +1,14 @@
 procgen-apex:
   env: procgen_env_wrapper # Change this at your own risk :D
   run: APEX
-  # Can be replaced by any of the available agents as described at :
-  # https://github.com/ray-project/ray/blob/master/rllib/agents/registry.py#L103
-  #
-  # Internally, rllib uses the terminology of Trainable, Algorithms, Agents depending
-  # on the context in which it is used. In this repository, we will consistently
-  # use the terminology of "Algorithms" to refer to these Trainables/Agents.
-  #
-  # This can also be replaced by a custom "algorithm"
-  # For addition of custom algorithms,
-  # Please refer to :
-  # https://github.com/AIcrowd/neurips2020-procgen-starter-kit/blob/master/algorithms/registry.py
-  ################################################
-  # === Stop Conditions ===
-  ################################################
   stop:
-    timesteps_total: 1
+    timesteps_total: 8000000
 
-  ################################################
-  # === Settings for Checkpoints ===
-  ################################################
   checkpoint_freq: 100
   checkpoint_at_end: True
   keep_checkpoints_num: 5
 
   config:
-    ################################################
-    ################################################
-    # === Settings for the Procgen Environment ===
-    ################################################
-    ################################################
     env_config:
       env_name: coinrun
       num_levels: 0
@@ -38,55 +16,46 @@ procgen-apex:
       paint_vel_info: False
       use_generated_assets: False
       center_agent: True
-      use_sequential_levels: False
+      use_sequential_levels: True
       distribution_mode: easy
 
-    ################################################
-    ################################################
-    # === Environment Settings ===
-    ################################################
-    ################################################
-    ignore_worker_failures: True
-    log_sys_usage: True
+    double_q: False
+    dueling: False
+    num_atoms: 1
+    noisy: False
+    n_step: 3
+    lr: .0001
+    adam_epsilon: .00015
+    buffer_size: 500000 # ~ 6GB of memory
+    exploration_config:
+      type: EpsilonGreedy
+      final_epsilon: 0.01
+      epsilon_timesteps: 200000
+    prioritized_replay_alpha: 0.5
+    final_prioritized_replay_beta: 1.0
+    prioritized_replay_beta_annealing_timesteps: 2000000
 
-    ################################################
-    ################################################
-    # === Settings for Model ===
-    ################################################
-    ################################################
-    model:
-      custom_model: impala_cnn_tf
-      custom_options: {}
-
-    ################################################
-    ################################################
-    # === Settings for Rollout Worker processes ===
-    ################################################
-    ################################################
-    num_workers: 2
-    num_envs_per_worker: 8
-
-    ################################################
-    ################################################
-    # === Advanced Resource Settings ===
-    ################################################
-    ################################################
-    num_cpus_per_worker: 0.5
+    num_gpus: 1
+    num_cpus_per_worker: 1
     num_gpus_per_worker: 0
     num_cpus_for_driver: 1
-    ################################################
-    ################################################
-    # === Settings for the Trainer process ===
-    ################################################
-    ################################################
-    num_gpus: 1
-    ################################################
-    ################################################
-    # === Exploration Settings ===
-    ################################################
-    ################################################
-    ################################################
-    ################################################
-    # === Advanced Rollout Settings ===
-    ################################################
-    ################################################
+
+    # APEX
+    num_workers: 14
+    num_envs_per_worker: 8
+    sample_batch_size: 20
+    train_batch_size: 500
+    target_network_update_freq: 50000
+    timesteps_per_iteration: 25000
+
+    model:
+      dim: 64
+      conv_filters: [[16, [3, 3], 1], [32, [3, 3], 1], [32, [3, 3], 1]]
+      conv_activation: relu
+      fcnet_hiddens: [256]
+      fcnet_activation: tanh
+      custom_model: my_vision_network
+      custom_options: {}
+
+    ignore_worker_failures: True
+    log_sys_usage: True
