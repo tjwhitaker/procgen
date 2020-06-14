@@ -1,0 +1,9 @@
+Throughput
+[32, 64, 64] 889 ts/sec
+[64, 128, 128] 360 ts/sec
+
+
+Using smaller training batches to leave more memory for model paramaters.
+
+Using 16 workers and 16 environments per worker.
+- Bumping the num_envs up may increase througput and allow for quicker training of big models
