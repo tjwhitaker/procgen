@@ -21,7 +21,7 @@ procgen-ppo:
 
         gamma: 0.999
         lambda: 0.95
-        lr: 3.5e-4
+        lr: 5.0e-4
         num_sgd_iter: 3
         sgd_minibatch_size: 2048 # 8 minibatches per epoch
         train_batch_size: 8192 # 256 * 32
@@ -55,9 +55,9 @@ procgen-ppo:
         batch_mode: truncate_episodes
 
         num_cpus_per_worker: 1
-        num_gpus_per_worker: 0
+        num_gpus_per_worker: 0.04
         num_cpus_for_driver: 1
-        num_gpus: 1
+        num_gpus: 0.3
 
         explore: True,
         exploration_config:
