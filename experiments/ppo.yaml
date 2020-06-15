@@ -17,7 +17,7 @@ procgen-ppo:
             use_generated_assets: False
             center_agent: True
             use_sequential_levels: False
-            distribution_mode: hard
+            distribution_mode: easy
 
         gamma: 0.999
         lambda: 0.95
@@ -49,8 +49,8 @@ procgen-ppo:
             custom_model: impala_cnn_tf
             custom_options: {}
 
-        num_workers: 6
-        num_envs_per_worker: 8
+        num_workers: 14
+        num_envs_per_worker: 16
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
 

@@ -346,6 +346,15 @@ def keep_going(steps, num_steps, episodes, num_episodes):
     return True
 
 
+def prune_weights(weights, probability):
+    w = copy.deepcopy(weights)
+    for layer in w.keys():
+        for weight in np.nditer(w[layer], op_flags=['readwrite']):
+            if random() < probability:
+                weight[...] = 0
+    return w
+
+
 def rollout(agent,
             env_name,
             num_steps,
@@ -393,6 +402,11 @@ def rollout(agent,
             video_callable=lambda x: True,
             force=True)
 
+    ######################################
+    probability = 0.1
+    weights = agent.get_policy().get_weights()
+    ensemble = [prune_weights(weights, probability) for i in range(8)]
+
     steps = 0
     episodes = 0
     while keep_going(steps, num_steps, episodes, num_episodes):
@@ -425,11 +439,22 @@ def rollout(agent,
                             policy_id=policy_id)
                         agent_states[agent_id] = p_state
                     else:
-                        a_action = agent.compute_action(
-                            a_obs,
-                            prev_action=prev_actions[agent_id],
-                            prev_reward=prev_rewards[agent_id],
-                            policy_id=policy_id)
+                        ##############################
+                        # Pseudo-Ensemble Evaluation
+                        ##############################
+                        ensemble_actions = []
+
+                        for weights in ensemble:
+                            agent.get_policy().set_weights(weights)
+                            ensemble_actions.append(agent.compute_action(
+                                a_obs,
+                                prev_action=prev_actions[agent_id],
+                                prev_reward=prev_rewards[agent_id],
+                                policy_id=policy_id))
+
+                        a_action = max(set(ensemble_actions),
+                                       key=ensemble_actions.count)
+
                     a_action = _flatten_action(a_action)  # tuple actions
                     action_dict[agent_id] = a_action
                     prev_actions[agent_id] = a_action
