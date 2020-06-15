@@ -49,8 +49,8 @@ procgen-ppo:
             custom_model: impala_cnn_tf
             custom_options: {}
 
-        num_workers: 14
-        num_envs_per_worker: 16
+        num_workers: 6
+        num_envs_per_worker: 8
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
 
