@@ -403,6 +403,8 @@ def rollout(agent,
             force=True)
 
     ######################################
+    # Pseudo-Ensemble Initialization
+    ######################################
     probability = 0.1
     weights = agent.get_policy().get_weights()
     ensemble = [prune_weights(weights, probability) for i in range(8)]
