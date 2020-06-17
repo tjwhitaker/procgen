@@ -1,6 +1,6 @@
-procgen-ppo:
+procgen-pe:
     env: procgen_env_wrapper  # Change this at your own risk :D
-    run: PPO
+    run: PseudoEnsemble
     stop:
         timesteps_total: 8000000
 
