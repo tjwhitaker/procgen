@@ -9,6 +9,13 @@ class PseudoEnsembleAgent(PPOTrainer):
     def __init__(self, config=None, env=None, logger_creator=None):
         super().__init__(config, env, logger_creator)
 
+        self.ensemble = []
+        self.og_weights = self.get_policy().get_weights()
+
+        for i in range(8):
+            new_weights = self.prune_weights(self.og_weights, 0.1)
+            self.ensemble.append(new_weights)
+
     def compute_action(self,
                        observation,
                        state=None,
@@ -21,16 +28,14 @@ class PseudoEnsembleAgent(PPOTrainer):
 
         # Create pseudo ensemble actions
         ensemble_actions = []
-        og_weights = self.get_policy().get_weights()
 
-        for i in range(8):
-            new_weights = self.prune_weights(og_weights, 0.1)
-            self.get_policy().set_weights(new_weights)
+        for weights in self.ensemble:
+            self.get_policy().set_weights(weights)
             ensemble_actions.append(super().compute_action(observation, state, prev_action,
                                                            prev_reward, info, policy_id, full_fetch, explore))
 
         # Reset Weights
-        self.get_policy().set_weights(og_weights)
+        self.get_policy().set_weights(self.og_weights)
 
         return max(set(ensemble_actions), key=ensemble_actions.count)
 
