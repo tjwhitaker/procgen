@@ -1,0 +1,65 @@
+procgen-rainbow:
+  env: procgen_env_wrapper # Change this at your own risk :D
+  run: APEX
+  stop:
+    timesteps_total: 8
+
+  checkpoint_freq: 100
+  checkpoint_at_end: True
+  keep_checkpoints_num: 5
+
+  config:
+    env_config:
+      env_name: coinrun
+      num_levels: 0
+      start_level: 0
+      paint_vel_info: True
+      use_generated_assets: False
+      center_agent: True
+      use_sequential_levels: False
+      distribution_mode: easy
+
+    lr: 5.0e-4
+    n_step: 4
+    noisy: False
+    num_atoms: 51
+    v_min: 0
+    v_max: 10
+    dueling: True
+    double_q: True
+    clip_actions: True
+    preprocessor_pref: deepmind
+    ignore_worker_failures: False
+    log_sys_usage: True
+    use_pytorch: False
+
+    train_batch_size: 512
+    rollout_fragment_length: 32
+    batch_mode: complete_episodes
+
+    explore: True
+    exploration_config:
+      type: "ParameterNoise"
+
+    model:
+      dim: 64
+      conv_filters: [[32, [3, 3], 1], [64, [3, 3], 1], [64, [3, 3], 1]]
+      conv_activation: relu
+      fcnet_hiddens: [256]
+      fcnet_activation: tanh
+      custom_model: vision_network
+      custom_options: {}
+
+    num_workers: 1
+    num_envs_per_worker: 16
+
+    num_cpus_per_worker: 1
+    num_gpus_per_worker: 0
+    num_cpus_for_driver: 1
+    num_gpus: 1
+
+    observation_filter: "NoFilter"
+    synchronize_filters: True
+    compress_observations: False
+    timesteps_per_iteration: 0
+    seed: null

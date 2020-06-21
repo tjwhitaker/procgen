@@ -13,7 +13,8 @@ def predict(data):
 
 class PseudoEnsembleAgent(PPOTrainer):
     def __init__(self, config=None, env=None, logger_creator=None):
-        config["num_workers"] = 0
+        # config["num_workers"] = 0
+        # config["num_gpus_per_worker"] = 1
         super().__init__(config, env, logger_creator)
 
         self.ensemble_weights = []
@@ -58,15 +59,16 @@ class PseudoEnsembleAgent(PPOTrainer):
 
         ensemble_actions = []
 
-        for weights in self.ensemble_weights:
-            self.get_policy().set_weights(weights)
-            ensemble_actions.append(super().compute_action(observation, state, prev_action,
-                                                           prev_reward, info, policy_id, full_fetch, explore))
-
+        # for weights in self.ensemble_weights:
+        #     self.get_policy().set_weights(weights)
+        #     ensemble_actions.append(super().compute_action(observation, state, prev_action,
+        #                                                    prev_reward, info, policy_id, full_fetch, explore))
+        super().compute_action(observation, state, prev_action,
+                               prev_reward, info, policy_id, full_fetch, explore)
         # # Reset Weights
         # self.get_policy().set_weights(self.og_weights)
         # print(ensemble_actions)
-
+        return 1
         return max(set(ensemble_actions), key=ensemble_actions.count)
 
     def prune_weights(self, weights, probability):
