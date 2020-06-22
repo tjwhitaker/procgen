@@ -3,6 +3,7 @@ procgen-ppo:
     run: PPO
     stop:
         timesteps_total: 8000000
+        episode_reward_mean: 9.5
 
     checkpoint_freq: 100
     checkpoint_at_end: True
@@ -21,7 +22,7 @@ procgen-ppo:
 
         gamma: 0.999
         lambda: 0.95
-        lr: 5.0e-4
+        lr: 3.5e-4
         num_sgd_iter: 3
         sgd_minibatch_size: 2048 # 8 minibatches per epoch
         train_batch_size: 8192 # 256 * 32
@@ -62,9 +63,6 @@ procgen-ppo:
         explore: True,
         exploration_config:
             type: "StochasticSampling"
-
-        evaluation_config:
-            explore: False
 
         observation_filter: "NoFilter"
         synchronize_filters: True

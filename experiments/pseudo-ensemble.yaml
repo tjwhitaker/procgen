@@ -50,7 +50,7 @@ procgen-pe:
             custom_options: {}
 
         num_workers: 14
-        num_envs_per_worker: 32
+        num_envs_per_worker: 16
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
 
@@ -63,6 +63,7 @@ procgen-pe:
         exploration_config:
             type: "StochasticSampling"
 
+        evaluation_interval: 8
         evaluation_config:
             explore: False
 
