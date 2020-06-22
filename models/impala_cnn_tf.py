@@ -40,7 +40,7 @@ class ImpalaCNN(TFModelV2):
     def __init__(self, obs_space, action_space, num_outputs, model_config, name):
         super().__init__(obs_space, action_space, num_outputs, model_config, name)
 
-        depths = [32, 64, 64]
+        depths = [40, 80, 80]
 
         inputs = tf.keras.layers.Input(
             shape=obs_space.shape, name="observations")
