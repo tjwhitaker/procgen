@@ -3,7 +3,6 @@ procgen-ppo:
     run: PPO
     stop:
         timesteps_total: 8000000
-        episode_reward_mean: 9.5
 
     checkpoint_freq: 100
     checkpoint_at_end: True
@@ -60,9 +59,7 @@ procgen-ppo:
         num_cpus_for_driver: 1
         num_gpus: 1
 
-        explore: True,
-        exploration_config:
-            type: "StochasticSampling"
+        explore: False
 
         observation_filter: "NoFilter"
         synchronize_filters: True
