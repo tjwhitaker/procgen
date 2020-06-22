@@ -59,7 +59,9 @@ procgen-ppo:
         num_cpus_for_driver: 1
         num_gpus: 1
 
-        explore: False
+        explore: True,
+        exploration_config:
+            type: "StochasticSampling"
 
         observation_filter: "NoFilter"
         synchronize_filters: True
