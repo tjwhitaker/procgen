@@ -2,7 +2,7 @@ procgen-pe:
     env: procgen_env_wrapper  # Change this at your own risk :D
     run: PseudoEnsemble
     stop:
-        timesteps_total: 8
+        timesteps_total: 8000000
 
     checkpoint_freq: 100
     checkpoint_at_end: True
@@ -46,7 +46,7 @@ procgen-pe:
         use_pytorch: False
 
         model:
-            custom_model: impala_cnn_tf
+            custom_model: impala_cnn
             custom_options: {}
 
         num_workers: 14
