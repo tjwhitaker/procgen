@@ -9,7 +9,14 @@ import ray
 
 class PseudoEnsembleAgent(PPOTrainer):
     def __init__(self, config=None, env=None, logger_creator=None):
+        if "test_flag" in config:
+            self.is_testing = True
+            config.pop("test_flag")
+        else:
+            self.is_testing = False
+
         super().__init__(config, env, logger_creator)
+
         self.og_weights = []
         self.ensemble_weights = []
 
@@ -22,41 +29,55 @@ class PseudoEnsembleAgent(PPOTrainer):
                        policy_id=DEFAULT_POLICY_ID,
                        full_fetch=False,
                        explore=None):
-        if state is None:
-            state = []
-        preprocessed = self.workers.local_worker().preprocessors[
-            policy_id].transform(observation)
-        filtered_obs = self.workers.local_worker().filters[policy_id](
-            preprocessed, update=False)
+        if self.is_testing:
+            print("testing")
+            if state is None:
+                state = []
+            preprocessed = self.workers.local_worker().preprocessors[
+                policy_id].transform(observation)
+            filtered_obs = self.workers.local_worker().filters[policy_id](
+                preprocessed, update=False)
 
-        # Figure out the current (sample) time step and pass it into Policy.
-        self.global_vars["timestep"] += 1
+            # Figure out the current (sample) time step and pass it into Policy.
+            self.global_vars["timestep"] += 1
 
-        ensemble_actions = []
+            ensemble_actions = []
 
-        for weights in self.ensemble_weights:
-            self.get_policy().set_weights(weights)
-            result = self.get_policy(policy_id).compute_single_action(
-                filtered_obs,
-                state,
-                prev_action,
-                prev_reward,
-                info,
-                clip_actions=self.config["clip_actions"],
-                explore=explore,
-                timestep=self.global_vars["timestep"])
-            ensemble_actions.append(result[0])
+            for weights in self.ensemble_weights:
+                self.get_policy().set_weights(weights)
+                result = self.get_policy(policy_id).compute_single_action(
+                    filtered_obs,
+                    state,
+                    prev_action,
+                    prev_reward,
+                    info,
+                    clip_actions=self.config["clip_actions"],
+                    explore=explore,
+                    timestep=self.global_vars["timestep"])
+                ensemble_actions.append(result[0])
 
-        return max(set(ensemble_actions), key=ensemble_actions.count)
+            return max(set(ensemble_actions), key=ensemble_actions.count)
+        else:
+            print("training")
+            return super().compute_action(observation,
+                                          state,
+                                          prev_action,
+                                          prev_reward,
+                                          info,
+                                          policy_id,
+                                          full_fetch,
+                                          explore)
 
     def restore(self, checkpoint_path):
         super().restore(checkpoint_path)
-        self.ensemble_weights = []
-        self.og_weights = self.get_policy().get_weights()
 
-        for i in range(4):
-            new_weights = self.prune_weights(self.og_weights, 0.1)
-            self.ensemble_weights.append(new_weights)
+        if self.is_testing:
+            self.ensemble_weights = []
+            self.og_weights = self.get_policy().get_weights()
+
+            for i in range(4):
+                new_weights = self.prune_weights(self.og_weights, 0.1)
+                self.ensemble_weights.append(new_weights)
 
     def prune_weights(self, weights, probability):
         w = deepcopy(weights)

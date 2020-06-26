@@ -28,7 +28,7 @@ procgen-ppo:
         kl_coeff: 0.0
         kl_target: 0.01
         vf_loss_coeff: 0.5
-        entropy_coeff: 0.001
+        entropy_coeff: 0.01
         clip_param: 0.2
         vf_clip_param: 0.2
         grad_clip: 0.5
@@ -43,10 +43,10 @@ procgen-ppo:
         preprocessor_pref: deepmind
         ignore_worker_failures: False
         log_sys_usage: True
-        use_pytorch: True
+        use_pytorch: False
 
         model:
-            custom_model: impala_cnn_torch
+            custom_model: impala_cnn
             custom_options: {}
 
         num_workers: 14

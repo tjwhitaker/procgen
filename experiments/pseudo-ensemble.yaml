@@ -63,13 +63,8 @@ procgen-pe:
         exploration_config:
             type: "StochasticSampling"
 
-        evaluation_interval: 8
-        evaluation_config:
-            explore: False
-
         observation_filter: "NoFilter"
         synchronize_filters: True
         compress_observations: False
         timesteps_per_iteration: 0
         seed: null
-        
