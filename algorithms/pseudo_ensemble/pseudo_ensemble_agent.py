@@ -30,7 +30,6 @@ class PseudoEnsembleAgent(PPOTrainer):
                        full_fetch=False,
                        explore=None):
         if self.is_testing:
-            print("testing")
             if state is None:
                 state = []
             preprocessed = self.workers.local_worker().preprocessors[
@@ -58,7 +57,6 @@ class PseudoEnsembleAgent(PPOTrainer):
 
             return max(set(ensemble_actions), key=ensemble_actions.count)
         else:
-            print("training")
             return super().compute_action(observation,
                                           state,
                                           prev_action,
