@@ -6,11 +6,9 @@ tf = try_import_tf()
 
 
 def conv_layer(depth, name):
-    out = tf.keras.layers.Conv2D(
-        filters=depth, kernel_size=3, strides=1, padding="same", name=name)
-    out = tf.keras.layers.Dropout(0.1)
-    out = tf.keras.layers.BatchNormalization()
-    return out
+    return tf.keras.layers.Conv2D(
+        filters=depth, kernel_size=3, strides=1, padding="same", name=name
+    )
 
 
 def residual_block(x, depth, prefix):
