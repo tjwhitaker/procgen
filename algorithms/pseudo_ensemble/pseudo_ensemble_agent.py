@@ -80,7 +80,7 @@ class PseudoEnsembleAgent(PPOTrainer):
     def prune_weights(self, weights, probability):
         w = deepcopy(weights)
         for layer in w.keys():
-            if ("pi" not in layer) and ("vf" not in layer):
+            if "hidden/kernel" in layer:
                 for weight in np.nditer(w[layer], op_flags=['readwrite']):
                     if random() < probability:
                         weight[...] = 0
