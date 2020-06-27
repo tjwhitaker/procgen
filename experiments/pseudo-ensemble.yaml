@@ -49,15 +49,15 @@ procgen-pe:
             custom_model: impala_cnn
             custom_options: {}
 
-        num_workers: 14
-        num_envs_per_worker: 16
+        num_workers: 6
+        num_envs_per_worker: 20
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
 
         num_cpus_per_worker: 1
-        num_gpus_per_worker: 0
+        num_gpus_per_worker: 0.05
         num_cpus_for_driver: 1
-        num_gpus: 1
+        num_gpus: 0.6
 
         explore: True,
         exploration_config:
