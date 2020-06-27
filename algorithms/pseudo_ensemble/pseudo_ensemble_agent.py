@@ -73,7 +73,7 @@ class PseudoEnsembleAgent(PPOTrainer):
             self.ensemble_weights = []
             self.og_weights = self.get_policy().get_weights()
 
-            for i in range(4):
+            for i in range(8):
                 new_weights = self.prune_weights(self.og_weights, 0.1)
                 self.ensemble_weights.append(new_weights)
 
