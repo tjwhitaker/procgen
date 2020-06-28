@@ -2,7 +2,7 @@ procgen-pe:
     env: procgen_env_wrapper  # Change this at your own risk :D
     run: PseudoEnsemble
     stop:
-        timesteps_total: 1000000
+        timesteps_total: 8000000
 
     checkpoint_freq: 100
     checkpoint_at_end: True
