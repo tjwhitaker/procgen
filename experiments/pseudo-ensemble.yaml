@@ -16,7 +16,7 @@ procgen-pe:
             paint_vel_info: True
             use_generated_assets: False
             center_agent: True
-            use_sequential_levels: False
+            use_sequential_levels: True
             distribution_mode: easy
 
         gamma: 0.999
