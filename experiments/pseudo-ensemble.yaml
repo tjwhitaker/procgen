@@ -50,7 +50,7 @@ procgen-pe:
             custom_options: {}
 
         num_workers: 0
-        num_envs_per_worker: 256
+        num_envs_per_worker: 8
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
 
