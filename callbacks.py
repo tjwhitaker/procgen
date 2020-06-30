@@ -10,6 +10,7 @@ from ray.rllib.agents.callbacks import DefaultCallbacks
 
 import numpy as np
 
+
 class CustomCallbacks(DefaultCallbacks):
     """
     Please refer to : 
@@ -73,7 +74,7 @@ class CustomCallbacks(DefaultCallbacks):
             kwargs: Forward compatibility placeholder.
         """
         ######################################################################
-        # An example of adding a custom metric from the latest observation 
+        # An example of adding a custom metric from the latest observation
         # from your env
         ######################################################################
         # last_obs_object_from_episode = episode.last_observation_for()
@@ -125,6 +126,14 @@ class CustomCallbacks(DefaultCallbacks):
                 You can mutate this object to add additional metrics.
             kwargs: Forward compatibility placeholder.
         """
+
+        # print("on train result: ", result['episode_reward_mean'])
+        # trainer.workers.foreach_worker(
+        #     lambda ev: ev.foreach_env(
+        #         lambda env: env.config["distribution_mode"]:="hard"
+        #     )
+        # )
+
         # In this case we also print the mean timesteps throughput
         # for easier reference in the logs
         # print("=============================================================")

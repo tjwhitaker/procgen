@@ -16,8 +16,8 @@ procgen-pe:
             paint_vel_info: True
             use_generated_assets: False
             center_agent: True
-            use_sequential_levels: True
-            distribution_mode: easy
+            use_sequential_levels: False
+            distribution_mode: hard
 
         gamma: 0.999
         lambda: 0.95
@@ -65,6 +65,9 @@ procgen-pe:
 
         evaluation_config:
             explore: False
+
+        callbacks:
+            on_train_result: on_train_result
 
         observation_filter: "NoFilter"
         synchronize_filters: True

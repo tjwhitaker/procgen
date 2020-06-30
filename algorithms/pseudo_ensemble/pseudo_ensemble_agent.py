@@ -85,3 +85,9 @@ class PseudoEnsembleAgent(PPOTrainer):
                     if random() < probability:
                         weight[...] = 0
         return w
+
+    def update_env():
+        # destroy env
+        # update config to hard mode
+        # create new env
+        pass
