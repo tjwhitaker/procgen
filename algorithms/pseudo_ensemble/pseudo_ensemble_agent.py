@@ -74,19 +74,19 @@ class PseudoEnsembleAgent(PPOTrainer):
             self.og_weights = self.get_policy().get_weights()
 
             for i in range(8):
-                new_weights = self.prune_weights(self.og_weights, 0.1)
+                new_weights = self.prune_weights(self.og_weights, 0.05)
                 self.ensemble_weights.append(new_weights)
 
     def prune_weights(self, weights, probability):
         w = deepcopy(weights)
         for layer in w.keys():
-            if "hidden/kernel" in layer:
+            if ("pi" not in layer) and ("vf" not in layer):
                 for weight in np.nditer(w[layer], op_flags=['readwrite']):
                     if random() < probability:
                         weight[...] = 0
         return w
 
-    def update_env():
+    def update_env(self):
         # destroy env
         # update config to hard mode
         # create new env

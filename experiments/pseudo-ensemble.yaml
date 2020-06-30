@@ -4,7 +4,7 @@ procgen-pe:
     stop:
         timesteps_total: 8000000
 
-    checkpoint_freq: 100
+    checkpoint_freq: 10000
     checkpoint_at_end: True
     keep_checkpoints_num: 5
 
@@ -17,7 +17,7 @@ procgen-pe:
             use_generated_assets: False
             center_agent: True
             use_sequential_levels: False
-            distribution_mode: hard
+            distribution_mode: easy
 
         gamma: 0.999
         lambda: 0.95
@@ -50,7 +50,7 @@ procgen-pe:
             custom_options: {}
 
         num_workers: 0
-        num_envs_per_worker: 64
+        num_envs_per_worker: 256
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
 
