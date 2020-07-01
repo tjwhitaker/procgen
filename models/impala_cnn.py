@@ -5,24 +5,26 @@ from ray.rllib.models import ModelCatalog
 tf = try_import_tf()
 
 
-def conv_layer(depth, name):
-    return tf.keras.layers.Conv2D(
-        filters=depth, kernel_size=3, strides=1, padding="same", name=name
-    )
+def conv_layer(x, depth, name):
+    x = tf.keras.layers.Conv2D(
+        filters=depth, kernel_size=3, strides=1, padding="same", name=name)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+
+    return x
 
 
 def residual_block(x, depth, prefix):
     inputs = x
     assert inputs.get_shape()[-1].value == depth
     x = tf.keras.layers.ReLU()(x)
-    x = conv_layer(depth, name=prefix + "_conv0")(x)
+    x = conv_layer(x, depth, name=prefix + "_conv0")
     x = tf.keras.layers.ReLU()(x)
-    x = conv_layer(depth, name=prefix + "_conv1")(x)
+    x = conv_layer(x, depth, name=prefix + "_conv1")
     return x + inputs
 
 
 def conv_sequence(x, depth, prefix):
-    x = conv_layer(depth, prefix + "_conv")(x)
+    x = conv_layer(x, depth, prefix + "_conv")
     x = tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding="same")(x)
     x = residual_block(x, depth, prefix=prefix + "_block0")
     x = residual_block(x, depth, prefix=prefix + "_block1")
@@ -40,7 +42,7 @@ class ImpalaCNN(TFModelV2):
     def __init__(self, obs_space, action_space, num_outputs, model_config, name):
         super().__init__(obs_space, action_space, num_outputs, model_config, name)
 
-        depths = [32, 64, 64, 64, 64]
+        depths = [32, 64, 64]
 
         inputs = tf.keras.layers.Input(
             shape=obs_space.shape, name="observations")
@@ -53,7 +55,7 @@ class ImpalaCNN(TFModelV2):
         x = tf.keras.layers.Flatten()(x)
         x = tf.keras.layers.ReLU()(x)
         x = tf.keras.layers.Dense(
-            units=512, activation="relu", name="hidden")(x)
+            units=256, activation="relu", name="hidden")(x)
         logits = tf.keras.layers.Dense(units=num_outputs, name="pi")(x)
         value = tf.keras.layers.Dense(units=1, name="vf")(x)
         self.base_model = tf.keras.Model(inputs, [logits, value])
