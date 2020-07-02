@@ -8,7 +8,7 @@ tf = try_import_tf()
 def conv_layer(x, depth, name):
     x = tf.keras.layers.Conv2D(
         filters=depth, kernel_size=3, strides=1, padding="same", name=name)(x)
-    x = tf.keras.layers.BatchNormalization()(x)
+    # x = tf.keras.layers.BatchNormalization()(x)
 
     return x
 
@@ -55,7 +55,7 @@ class ImpalaCNN(TFModelV2):
         x = tf.keras.layers.Flatten()(x)
         x = tf.keras.layers.ReLU()(x)
         x = tf.keras.layers.Dense(
-            units=256, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(0.001), name="hidden")(x)
+            units=512, activation="relu", kernel_regularizer=tf.keras.regularizers.l2(0.001), name="hidden")(x)
         logits = tf.keras.layers.Dense(units=num_outputs, name="pi")(x)
         value = tf.keras.layers.Dense(units=1, name="vf")(x)
         self.base_model = tf.keras.Model(inputs, [logits, value])
