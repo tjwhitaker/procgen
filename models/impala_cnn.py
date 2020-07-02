@@ -8,7 +8,7 @@ tf = try_import_tf()
 def conv_layer(x, depth, name):
     x = tf.keras.layers.Conv2D(
         filters=depth, kernel_size=3, strides=1, padding="same", name=name)(x)
-    # x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.BatchNormalization()(x)
 
     return x
 
