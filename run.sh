@@ -85,7 +85,7 @@ if [[ " $@ " =~ " --rollout " ]]; then
   fi
   echo "Rollout with checkpoint: $CHECKPOINT"
   echo "Executing: python ./rollout.py $CHECKPOINT --episodes ${EPISODES:-5} --run $ROLLOUT_RUN --env $ROLLOUT_ENV"
-  python ./rollout.py $CHECKPOINT --episodes ${EPISODES:-5} --run $ROLLOUT_RUN --env $ROLLOUT_ENV --config '{"test_flag": true}'
+  python ./rollout.py $CHECKPOINT --episodes ${EPISODES:-5} --run $ROLLOUT_RUN --env $ROLLOUT_ENV
   STATUS_CODE=$?
 fi
 
