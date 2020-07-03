@@ -60,6 +60,7 @@ class ImpalaCNN(TFModelV2):
 
         logits = tf.keras.layers.Dense(units=num_outputs, name="pi")(x)
 
+        # Reduce action space
         valid_actions = np.array(
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], dtype=np.float32).reshape(1, 15)
         logits_masked = tf.keras.layers.Multiply()([logits, valid_actions])
@@ -68,7 +69,7 @@ class ImpalaCNN(TFModelV2):
         actions = scale(logits_masked)
 
         value = tf.keras.layers.Dense(units=1, name="vf")(x)
-        self.base_model = tf.keras.Model(inputs, [logits_masked, value])
+        self.base_model = tf.keras.Model(inputs, [actions, value])
         self.register_variables(self.base_model.variables)
 
     def forward(self, input_dict, state, seq_lens):
