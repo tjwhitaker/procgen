@@ -56,7 +56,7 @@ class ImpalaCNN(TFModelV2):
         x = tf.keras.layers.Flatten()(x)
         x = tf.keras.layers.ReLU()(x)
         x = tf.keras.layers.Dense(
-            units=512, activation="relu", name="hidden")(x)
+            units=512, activation="tanh", name="hidden")(x)
 
         logits = tf.keras.layers.Dense(units=num_outputs, name="pi")(x)
 
@@ -64,12 +64,12 @@ class ImpalaCNN(TFModelV2):
         valid_actions = np.array(
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], dtype=np.float32).reshape(1, 15)
         logits_masked = tf.keras.layers.Multiply()([logits, valid_actions])
-        scale = tf.keras.layers.Lambda(
-            lambda x: x / tf.keras.backend.sum(x, axis=1)[:, None])
-        actions = scale(logits_masked)
+        # scale = tf.keras.layers.Lambda(
+        #     lambda x: x / tf.keras.backend.sum(x, axis=1)[:, None])
+        # actions = scale(logits_masked)
 
         value = tf.keras.layers.Dense(units=1, name="vf")(x)
-        self.base_model = tf.keras.Model(inputs, [actions, value])
+        self.base_model = tf.keras.Model(inputs, [logits_masked, value])
         self.register_variables(self.base_model.variables)
 
     def forward(self, input_dict, state, seq_lens):
