@@ -56,7 +56,7 @@ class ImpalaCNN(TFModelV2):
         x = tf.keras.layers.Flatten()(x)
         x = tf.keras.layers.ReLU()(x)
         x = tf.keras.layers.Dense(
-            units=512, activation="tanh", name="hidden")(x)
+            units=256, activation="tanh", name="hidden")(x)
 
         logits = tf.keras.layers.Dense(units=num_outputs, name="pi")(x)
 
