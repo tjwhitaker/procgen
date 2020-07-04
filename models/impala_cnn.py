@@ -69,9 +69,9 @@ class ImpalaCNN(TFModelV2):
         logits, self._value = self.base_model(obs)
 
         # action_mask = np.array(
-        #     [1., 1., 1., 1., 1., 1., 1., 1., 1., 0., 0., 0., 0., 0., 0.], dtype=np.float32).reshape(1, 15)
+        #     [1., 1., 1., 1., 1., 1., 1., 1., 1., 0., 0., 0., 0., 0., 0.], dtype=np.float32)
 
-        # inf_mask = tf.maximum(tf.math.log(action_mask), tf.float32.min)
+        # inf_mask = tf.maximum(tf.math.log(action_mask), tf.float16.min)
 
         return logits, state
 
