@@ -1,8 +1,9 @@
 procgen-ppo:
-    env: procgen_env_wrapper  # Change this at your own risk :D
+    env: procgen_env_wrapper
     run: PPO
     stop:
         timesteps_total: 8000000
+        time_total_s: 7200
 
     checkpoint_freq: 100
     checkpoint_at_end: True
@@ -17,11 +18,14 @@ procgen-ppo:
             use_generated_assets: False
             center_agent: True
             use_sequential_levels: False
+            restrict_themes: True
+            use_monochrome_assets: True
+            use_backgrounds: False
             distribution_mode: easy
 
         gamma: 0.999
         lambda: 0.95
-        lr: 2.5e-4
+        lr: 1.0e-4
         num_sgd_iter: 3
         sgd_minibatch_size: 2048 # 8 minibatches per epoch
         train_batch_size: 16384 # 256 * 32
@@ -50,9 +54,9 @@ procgen-ppo:
             custom_options: {}
 
         num_workers: 0
-        num_envs_per_worker: 32
+        num_envs_per_worker: 16
         rollout_fragment_length: 256
-        batch_mode: truncate_episodes
+        batch_mode: complete_episodes
 
         num_cpus_per_worker: 1
         num_gpus_per_worker: 0
@@ -62,6 +66,9 @@ procgen-ppo:
         explore: True,
         exploration_config:
             type: "StochasticSampling"
+
+        evaluation_config:
+            explore: False
 
         observation_filter: "NoFilter"
         synchronize_filters: True
