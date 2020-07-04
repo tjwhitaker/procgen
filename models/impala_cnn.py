@@ -6,26 +6,24 @@ import numpy as np
 tf = try_import_tf()
 
 
-def conv_layer(x, depth, name):
-    x = tf.keras.layers.Conv2D(
-        filters=depth, kernel_size=3, strides=1, padding="same", name=name)(x)
-    # x = tf.keras.layers.BatchNormalization()(x)
-
-    return x
+def conv_layer(depth, name):
+    return tf.keras.layers.Conv2D(
+        filters=depth, kernel_size=3, strides=1, padding="same", name=name
+    )
 
 
 def residual_block(x, depth, prefix):
     inputs = x
     assert inputs.get_shape()[-1].value == depth
     x = tf.keras.layers.ReLU()(x)
-    x = conv_layer(x, depth, name=prefix + "_conv0")
+    x = conv_layer(depth, name=prefix + "_conv0")(x)
     x = tf.keras.layers.ReLU()(x)
-    x = conv_layer(x, depth, name=prefix + "_conv1")
+    x = conv_layer(depth, name=prefix + "_conv1")(x)
     return x + inputs
 
 
 def conv_sequence(x, depth, prefix):
-    x = conv_layer(x, depth, prefix + "_conv")
+    x = conv_layer(depth, prefix + "_conv")(x)
     x = tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding="same")(x)
     x = residual_block(x, depth, prefix=prefix + "_block0")
     x = residual_block(x, depth, prefix=prefix + "_block1")
@@ -56,8 +54,7 @@ class ImpalaCNN(TFModelV2):
         x = tf.keras.layers.Flatten()(x)
         x = tf.keras.layers.ReLU()(x)
         x = tf.keras.layers.Dense(
-            units=512, activation="tanh", name="hidden")(x)
-
+            units=512, activation="relu", name="hidden")(x)
         logits = tf.keras.layers.Dense(units=num_outputs, name="pi")(x)
         value = tf.keras.layers.Dense(units=1, name="vf")(x)
         self.base_model = tf.keras.Model(inputs, [logits, value])
@@ -67,7 +64,6 @@ class ImpalaCNN(TFModelV2):
         # explicit cast to float32 needed in eager
         obs = tf.cast(input_dict["obs"], tf.float32)
         logits, self._value = self.base_model(obs)
-
         return logits, state
 
     def value_function(self):
