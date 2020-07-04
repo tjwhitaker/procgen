@@ -68,12 +68,7 @@ class ImpalaCNN(TFModelV2):
         obs = tf.cast(input_dict["obs"], tf.float32)
         logits, self._value = self.base_model(obs)
 
-        action_mask = np.array(
-            [1., 1., 1., 1., 1., 1., 1., 1., 1., 0., 0., 0., 0., 0., 0.], dtype=np.float32)
-
-        inf_mask = tf.maximum(tf.math.log(action_mask), tf.float16.min)
-
-        return logits + inf_mask, state
+        return logits, state
 
     def value_function(self):
         return tf.reshape(self._value, [-1])
