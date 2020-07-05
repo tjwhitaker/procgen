@@ -392,6 +392,7 @@ def rollout(agent,
 
     steps = 0
     episodes = 0
+    super_total = 0
     while keep_going(steps, num_steps, episodes, num_episodes):
         mapping_cache = {}  # in case policy_agent_mapping is stochastic
         saver.begin_rollout()
@@ -454,8 +455,13 @@ def rollout(agent,
         saver.end_rollout()
         print("Episode #{}: reward: {} steps: {}".format(
             episodes, reward_total, episode_steps))
+
+        super_total += reward_total
+
         if done:
             episodes += 1
+
+    print("Final Score: ", super_total)
 
 
 if __name__ == "__main__":
