@@ -29,7 +29,7 @@ procgen-ppo:
         num_sgd_iter: 3
         sgd_minibatch_size: 2048 # 8 minibatches per epoch
         train_batch_size: 16384 # 256 * 32
-        kl_coeff: 0.2
+        kl_coeff: 0.5
         kl_target: 0.01
         vf_loss_coeff: 0.5
         entropy_coeff: 0.01
@@ -54,7 +54,7 @@ procgen-ppo:
             custom_options: {}
 
         num_workers: 0
-        num_envs_per_worker: 8
+        num_envs_per_worker: 16
         rollout_fragment_length: 256
         batch_mode: complete_episodes
 

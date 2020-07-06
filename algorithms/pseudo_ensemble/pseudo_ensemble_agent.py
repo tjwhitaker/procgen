@@ -7,11 +7,32 @@ from ray.rllib.policy.sample_batch import DEFAULT_POLICY_ID
 import ray
 
 
+def prune_weights(weights, probability):
+    w = deepcopy(weights)
+
+    for layer in weights.keys():
+        if ("pi" not in layer) and ("vf" not in layer):
+            for weight in np.nditer(w[layer], op_flags=['readwrite']):
+                if random() < probability:
+                    weight[...] = 0
+
+    return weights
+
+
+def add_gaussian_noise(weights, scale):
+    w = deepcopy(weights)
+
+    for layer in weights.keys():
+        if ("pi" not in layer) and ("vf" not in layer):
+            for weight in np.nditer(w[layer], op_flags=['readwrite']):
+                weight[...] += np.random.normal(0, scale)
+
+    return weights
+
+
 class PseudoEnsembleAgent(PPOTrainer):
     def __init__(self, config=None, env=None, logger_creator=None):
         super().__init__(config, env, logger_creator)
-
-        self.og_weights = []
         self.ensemble_weights = []
 
     def compute_action(self,
@@ -52,21 +73,14 @@ class PseudoEnsembleAgent(PPOTrainer):
 
     def restore(self, checkpoint_path):
         super().restore(checkpoint_path)
+        self.create_ensemble()
+
+    def create_ensemble(self):
         self.ensemble_weights = []
-        self.og_weights = self.get_policy().get_weights()
+        weights = self.get_policy().get_weights()
 
         for i in range(8):
-            new_weights = self.prune_weights(self.og_weights, 0.05)
+            # new_weights = prune_weights(weights, 0.05)
+            new_weights = add_gaussian_noise(weights, 0.1)
+
             self.ensemble_weights.append(new_weights)
-
-    def prune_weights(self, weights, probability):
-        w = deepcopy(weights)
-        for layer in w.keys():
-            if ("pi" not in layer) and ("vf" not in layer):
-                for weight in np.nditer(w[layer], op_flags=['readwrite']):
-                    if random() < probability:
-                        weight[...] = 0
-        return w
-
-    def update_env(self):
-        pass
