@@ -81,6 +81,6 @@ class PseudoEnsembleAgent(PPOTrainer):
 
         for i in range(8):
             # new_weights = prune_weights(weights, 0.05)
-            new_weights = add_gaussian_noise(weights, 0.1)
+            new_weights = add_gaussian_noise(weights, 1.0)
 
             self.ensemble_weights.append(new_weights)

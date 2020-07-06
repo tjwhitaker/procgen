@@ -1,74 +1,71 @@
-from ray.rllib.models.tf.tf_modelv2 import TFModelV2
-from ray.rllib.utils.framework import try_import_tf
+from ray.rllib.models.torch.torch_modelv2 import TorchModelV2
 from ray.rllib.models import ModelCatalog
-import numpy as np
+from ray.rllib.utils.annotations import override
+from ray.rllib.utils import try_import_torch
 
-tf = try_import_tf()
-
-
-def conv_layer(depth, name):
-    return tf.keras.layers.Conv2D(
-        filters=depth, kernel_size=3, strides=1, padding="same", name=name
-    )
+torch, nn = try_import_torch()
 
 
-def residual_block(x, depth, prefix):
-    inputs = x
-    assert inputs.get_shape()[-1].value == depth
-    x = tf.keras.layers.ReLU()(x)
-    x = conv_layer(depth, name=prefix + "_conv0")(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = conv_layer(depth, name=prefix + "_conv1")(x)
-    return x + inputs
-
-
-def conv_sequence(x, depth, prefix):
-    x = conv_layer(depth, prefix + "_conv")(x)
-    x = tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding="same")(x)
-    x = residual_block(x, depth, prefix=prefix + "_block0")
-    x = residual_block(x, depth, prefix=prefix + "_block1")
-    return x
-
-
-class FixupImpala(TFModelV2):
+class FixupCNN(nn.Module):
     """
-    Network from IMPALA paper implemented in ModelV2 API.
-
-    Based on https://github.com/ray-project/ray/blob/master/rllib/models/tf/visionnet_v2.py
-    and https://github.com/openai/baselines/blob/9ee399f5b20cd70ac0a871927a6cf043b478193f/baselines/common/models.py#L28
+    A larger version of the IMPALA CNN with Fixup init.
+    See Fixup: https://arxiv.org/abs/1901.09321.
     """
 
-    def __init__(self, obs_space, action_space, num_outputs, model_config, name):
-        super().__init__(obs_space, action_space, num_outputs, model_config, name)
+    def __init__(self, image_size, depth_in):
+        super().__init__()
+        layers = []
+        for depth_out in [32, 64, 64]:
+            layers.extend([
+                nn.Conv2d(depth_in, depth_out, 3, padding=1),
+                nn.MaxPool2d(3, stride=2, padding=1),
+                FixupResidual(depth_out, 8),
+                FixupResidual(depth_out, 8),
+            ])
+            depth_in = depth_out
+        layers.extend([
+            FixupResidual(depth_in, 8),
+            FixupResidual(depth_in, 8),
+        ])
+        self.conv_layers = nn.Sequential(*layers)
+        self.linear = nn.Linear(math.ceil(image_size / 8) ** 2 * depth_in, 256)
 
-        depths = [32, 64, 64]
-
-        inputs = tf.keras.layers.Input(
-            shape=obs_space.shape, name="observations")
-        scaled_inputs = tf.cast(inputs, tf.float32) / 255.0
-
-        x = scaled_inputs
-        for i, depth in enumerate(depths):
-            x = conv_sequence(x, depth, prefix=f"seq{i}")
-
-        x = tf.keras.layers.Flatten()(x)
-        x = tf.keras.layers.ReLU()(x)
-        x = tf.keras.layers.Dense(
-            units=512, activation="relu", name="hidden")(x)
-        logits = tf.keras.layers.Dense(units=num_outputs, name="pi")(x)
-        value = tf.keras.layers.Dense(units=1, name="vf")(x)
-        self.base_model = tf.keras.Model(inputs, [logits, value])
-        self.register_variables(self.base_model.variables)
-
-    def forward(self, input_dict, state, seq_lens):
-        # explicit cast to float32 needed in eager
-        obs = tf.cast(input_dict["obs"], tf.float32)
-        logits, self._value = self.base_model(obs)
-        return logits, state
-
-    def value_function(self):
-        return tf.reshape(self._value, [-1])
+    def forward(self, x):
+        x = x.permute(0, 3, 1, 2).contiguous()
+        x = self.conv_layers(x)
+        x = F.relu(x)
+        x = x.view(x.shape[0], -1)
+        x = self.linear(x)
+        x = F.relu(x)
+        return x
 
 
-# Register model in ModelCatalog
-ModelCatalog.register_custom_model("fixup_impala", FixupImpala)
+class FixupResidual(nn.Module):
+    def __init__(self, depth, num_residual):
+        super().__init__()
+        self.conv1 = nn.Conv2d(depth, depth, 3, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(depth, depth, 3, padding=1, bias=False)
+        for p in self.conv1.parameters():
+            p.data.mul_(1 / math.sqrt(num_residual))
+        for p in self.conv2.parameters():
+            p.data.zero_()
+        self.bias1 = nn.Parameter(torch.zeros([depth, 1, 1]))
+        self.bias2 = nn.Parameter(torch.zeros([depth, 1, 1]))
+        self.bias3 = nn.Parameter(torch.zeros([depth, 1, 1]))
+        self.bias4 = nn.Parameter(torch.zeros([depth, 1, 1]))
+        self.scale = nn.Parameter(torch.ones([depth, 1, 1]))
+
+    def forward(self, x):
+        x = F.relu(x)
+        out = x + self.bias1
+        out = self.conv1(out)
+        out = out + self.bias2
+        out = F.relu(out)
+        out = out + self.bias3
+        out = self.conv2(out)
+        out = out * self.scale
+        out = out + self.bias4
+        return out + x
+
+
+# ModelCatalog.register_custom_model("impala_cnn_torch", ImpalaCNN)
