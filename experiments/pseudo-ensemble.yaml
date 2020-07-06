@@ -32,7 +32,7 @@ procgen-pe:
         kl_coeff: 0.5
         kl_target: 0.01
         vf_loss_coeff: 0.5
-        entropy_coeff: 0.01
+        entropy_coeff: 0.001
         clip_param: 0.2
         vf_clip_param: 0.2
         grad_clip: 0.5
@@ -47,16 +47,16 @@ procgen-pe:
         preprocessor_pref: deepmind
         ignore_worker_failures: False
         log_sys_usage: True
-        use_pytorch: False
+        use_pytorch: True
 
         model:
-            custom_model: impala_cnn
+            custom_model: fixup_cnn
             custom_options: {}
 
         num_workers: 0
         num_envs_per_worker: 16
         rollout_fragment_length: 256
-        batch_mode: complete_episodes
+        batch_mode: truncate_episodes
 
         num_cpus_per_worker: 1
         num_gpus_per_worker: 0

@@ -2,18 +2,29 @@ from ray.rllib.models.torch.torch_modelv2 import TorchModelV2
 from ray.rllib.models import ModelCatalog
 from ray.rllib.utils.annotations import override
 from ray.rllib.utils import try_import_torch
+import math
 
 torch, nn = try_import_torch()
 
 
-class FixupCNN(nn.Module):
+class FixupCNN(TorchModelV2, nn.Module):
     """
     A larger version of the IMPALA CNN with Fixup init.
     See Fixup: https://arxiv.org/abs/1901.09321.
+
+    Adapted from open source code by Alex Nichol:
+    https://github.com/unixpickle/obs-tower2
     """
 
-    def __init__(self, image_size, depth_in):
-        super().__init__()
+    def __init__(self, obs_space, action_space, num_outputs, model_config,
+                 name):
+        TorchModelV2.__init__(self, obs_space, action_space, num_outputs,
+                              model_config, name)
+        nn.Module.__init__(self)
+
+        h, w, c = obs_space.shape
+        depth_in = c
+
         layers = []
         for depth_out in [32, 64, 64]:
             layers.extend([
@@ -28,16 +39,30 @@ class FixupCNN(nn.Module):
             FixupResidual(depth_in, 8),
         ])
         self.conv_layers = nn.Sequential(*layers)
-        self.linear = nn.Linear(math.ceil(image_size / 8) ** 2 * depth_in, 256)
+        self.hidden_fc = nn.Linear(
+            in_features=4096, out_features=256)
+        self.logits_fc = nn.Linear(in_features=256, out_features=num_outputs)
+        self.value_fc = nn.Linear(in_features=256, out_features=1)
 
-    def forward(self, x):
+    def forward(self, input_dict, state, seq_lens):
+        x = input_dict["obs"].float()
+        x = x / 255.0  # scale to 0-1
         x = x.permute(0, 3, 1, 2).contiguous()
         x = self.conv_layers(x)
-        x = F.relu(x)
+        x = nn.functional.relu(x)
         x = x.view(x.shape[0], -1)
-        x = self.linear(x)
-        x = F.relu(x)
-        return x
+        x = self.hidden_fc(x)
+        x = nn.functional.relu(x)
+
+        logits = self.logits_fc(x)
+        value = self.value_fc(x)
+
+        self._value = value.squeeze(1)
+        return logits, state
+
+    def value_function(self):
+        assert self._value is not None, "must call forward() first"
+        return self._value
 
 
 class FixupResidual(nn.Module):
@@ -56,11 +81,11 @@ class FixupResidual(nn.Module):
         self.scale = nn.Parameter(torch.ones([depth, 1, 1]))
 
     def forward(self, x):
-        x = F.relu(x)
+        x = nn.functional.relu(x)
         out = x + self.bias1
         out = self.conv1(out)
         out = out + self.bias2
-        out = F.relu(out)
+        out = nn.functional.relu(out)
         out = out + self.bias3
         out = self.conv2(out)
         out = out * self.scale
@@ -68,4 +93,4 @@ class FixupResidual(nn.Module):
         return out + x
 
 
-# ModelCatalog.register_custom_model("impala_cnn_torch", ImpalaCNN)
+ModelCatalog.register_custom_model("fixup_cnn", FixupCNN)

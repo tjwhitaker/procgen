@@ -17,7 +17,7 @@ procgen-ppo:
             paint_vel_info: True
             use_generated_assets: False
             center_agent: True
-            use_sequential_levels: True
+            use_sequential_levels: False
             restrict_themes: True
             use_monochrome_assets: True
             use_backgrounds: False
@@ -47,10 +47,10 @@ procgen-ppo:
         preprocessor_pref: deepmind
         ignore_worker_failures: False
         log_sys_usage: True
-        use_pytorch: False
+        use_pytorch: True
 
         model:
-            custom_model: impala_cnn
+            custom_model: fixup_cnn
             custom_options: {}
 
         num_workers: 0
