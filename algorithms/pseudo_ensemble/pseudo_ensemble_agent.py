@@ -35,41 +35,41 @@ class PseudoEnsembleAgent(PPOTrainer):
         super().__init__(config, env, logger_creator)
         self.ensemble_weights = []
 
-    def compute_action(self,
-                       observation,
-                       state=None,
-                       prev_action=None,
-                       prev_reward=None,
-                       info=None,
-                       policy_id=DEFAULT_POLICY_ID,
-                       full_fetch=False,
-                       explore=None):
-        if state is None:
-            state = []
-        preprocessed = self.workers.local_worker().preprocessors[
-            policy_id].transform(observation)
-        filtered_obs = self.workers.local_worker().filters[policy_id](
-            preprocessed, update=False)
+    # def compute_action(self,
+    #                    observation,
+    #                    state=None,
+    #                    prev_action=None,
+    #                    prev_reward=None,
+    #                    info=None,
+    #                    policy_id=DEFAULT_POLICY_ID,
+    #                    full_fetch=False,
+    #                    explore=None):
+    #     if state is None:
+    #         state = []
+    #     preprocessed = self.workers.local_worker().preprocessors[
+    #         policy_id].transform(observation)
+    #     filtered_obs = self.workers.local_worker().filters[policy_id](
+    #         preprocessed, update=False)
 
-        # Figure out the current (sample) time step and pass it into Policy.
-        self.global_vars["timestep"] += 1
+    #     # Figure out the current (sample) time step and pass it into Policy.
+    #     self.global_vars["timestep"] += 1
 
-        ensemble_actions = []
+    #     ensemble_actions = []
 
-        for weights in self.ensemble_weights:
-            self.get_policy().set_weights(weights)
-            result = self.get_policy(policy_id).compute_single_action(
-                filtered_obs,
-                state,
-                prev_action,
-                prev_reward,
-                info,
-                clip_actions=self.config["clip_actions"],
-                explore=explore,
-                timestep=self.global_vars["timestep"])
-            ensemble_actions.append(result[0])
+    #     for weights in self.ensemble_weights:
+    #         self.get_policy().set_weights(weights)
+    #         result = self.get_policy(policy_id).compute_single_action(
+    #             filtered_obs,
+    #             state,
+    #             prev_action,
+    #             prev_reward,
+    #             info,
+    #             clip_actions=self.config["clip_actions"],
+    #             explore=explore,
+    #             timestep=self.global_vars["timestep"])
+    #         ensemble_actions.append(result[0])
 
-        return max(set(ensemble_actions), key=ensemble_actions.count)
+    #     return max(set(ensemble_actions), key=ensemble_actions.count)
 
     def restore(self, checkpoint_path):
         super().restore(checkpoint_path)

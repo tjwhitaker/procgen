@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
+FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -18,7 +18,7 @@ RUN apt -qq update && apt -qq install -y --no-install-recommends \
 # S3 client
 RUN wget -nv -O ./mc https://dl.min.io/client/mc/release/linux-amd64/mc \
  && mv ./mc /bin/mc && chmod +x /bin/mc
- 
+
 # Unicode support:
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -58,4 +58,5 @@ RUN wget -nv -O miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py37
 
 ENV PATH ${CONDA_DIR}/bin:${PATH}
 
-RUN pip install -r requirements.txt --no-cache-dir
+RUN pip install -r requirements.txt --no-cache-dir \
+ && pip install torch==1.3.1+cu100 torchvision==0.4.2+cu100 -f https://download.pytorch.org/whl/torch_stable.html
