@@ -19,7 +19,7 @@ procgen-pe:
             center_agent: True
             use_sequential_levels: False
             restrict_themes: True
-            use_monochrome_assets: True
+            use_monochrome_assets: False
             use_backgrounds: False
             distribution_mode: easy
 
