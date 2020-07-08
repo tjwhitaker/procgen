@@ -17,7 +17,7 @@ procgen-ppo:
             paint_vel_info: True
             use_generated_assets: False
             center_agent: True
-            use_sequential_levels: False
+            use_sequential_levels: True
             restrict_themes: True
             use_monochrome_assets: True
             use_backgrounds: False
