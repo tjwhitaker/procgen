@@ -5,6 +5,7 @@ from ray.rllib.agents.ppo import PPOTrainer
 from ray.rllib.policy.sample_batch import DEFAULT_POLICY_ID
 
 import ray
+import cma
 
 
 def prune_weights(weights, probability):
@@ -37,6 +38,13 @@ class PseudoEnsembleAgent(PPOTrainer):
         super().__init__(config, env, logger_creator)
         self.ensemble_weights = []
         self.original_weights = []
+        self.config["evaluation_num_episodes"] = 10
+        self.config["evaluation_num_workers"] = 0
+        self.evaluation_workers = self._make_workers(
+            self.env_creator,
+            self._policy,
+            self.config,
+            num_workers=1)
 
     def compute_action(self,
                        observation,
@@ -105,3 +113,18 @@ class PseudoEnsembleAgent(PPOTrainer):
             # deepcopy(self.original_weights), 0.1)
 
             self.ensemble_weights.append(new_weights)
+
+    # def evolve(self):
+    #     vector = deepcopy(self.original_weights['logits_fc.weight'])
+    #     fv = vector.flatten()
+    #     es = cma.CMAEvolutionStrategy(fv, 0.05)
+    #     es.optimize(self.evolve_eval, iterations=10)
+    #     pass
+
+    # def evolve_eval(self, x):
+    #     new_weights = deepcopy(self.original_weights)
+    #     new_weights['logits_fc.weight'] = x.reshape(15, 256)
+    #     self.get_policy().set_weights(new_weights)
+    #     metrics = self.local_worker.sample()
+    #     print(metrics)
+    #     return metrics['evaluation']['episode_reward_max'] - metrics['evaluation']['episode_reward_mean']
