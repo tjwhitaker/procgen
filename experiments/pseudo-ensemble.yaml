@@ -2,7 +2,7 @@ procgen-pe:
     env: procgen_env_wrapper
     run: PseudoEnsemble
     stop:
-        timesteps_total: 8
+        timesteps_total: 8000000
         time_total_s: 7200
 
     checkpoint_freq: 100
