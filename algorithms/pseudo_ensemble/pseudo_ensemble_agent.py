@@ -3,7 +3,6 @@ from copy import deepcopy
 from random import random
 from ray.rllib.agents.ppo import PPOTrainer
 from ray.rllib.policy.sample_batch import DEFAULT_POLICY_ID
-from ray.rllib.utils import merge_dicts
 
 import ray
 
@@ -34,25 +33,8 @@ def calculate_confidence(values):
 class PseudoEnsembleAgent(PPOTrainer):
     def __init__(self, config=None, env=None, logger_creator=None):
         super().__init__(config, env, logger_creator)
-
         self.ensemble_weights = []
         self.original_weights = []
-
-        # extra_config = deepcopy(self.config["evaluation_config"])
-        # extra_config.update({
-        #     "batch_mode": "complete_episodes",
-        #     "rollout_fragment_length": 1,
-        #     "in_evaluation": True,
-        # })
-
-        # self.config["evaluation_num_episodes"] = 25
-        # self.config["evaluation_num_workers"] = 0
-
-        # self.evaluation_workers = self._make_workers(
-        #     self.env_creator,
-        #     self._policy,
-        #     merge_dicts(self.config, extra_config),
-        #     num_workers=0)
 
     def compute_action(self,
                        observation,
@@ -119,18 +101,3 @@ class PseudoEnsembleAgent(PPOTrainer):
             # new_weights = prune_weights(w, 0.1)
             new_weights = add_gaussian_noise(w, 0.1)
             self.ensemble_weights.append(new_weights)
-
-    # def evolve(self):
-    #     vector = deepcopy(self.original_weights['logits_fc.weight'])
-    #     fv = vector.flatten()
-    #     es = cma.CMAEvolutionStrategy(fv, 0.05)
-    #     es.optimize(self.evolve_eval, iterations=10, verb_disp=1)
-    #     pass
-
-    # def evolve_eval(self, x):
-    #     new_weights = deepcopy(self.original_weights)
-    #     new_weights['logits_fc.weight'] = x.reshape(15, 256)
-    #     self.get_policy().set_weights(new_weights)
-    #     metrics = self._evaluate()
-    #     print(metrics['evaluation']['episode_reward_mean'])
-    #     return metrics['evaluation']['episode_reward_max'] - metrics['evaluation']['episode_reward_mean']
