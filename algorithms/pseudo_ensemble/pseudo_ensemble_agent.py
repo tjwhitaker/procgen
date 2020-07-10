@@ -6,7 +6,6 @@ from ray.rllib.policy.sample_batch import DEFAULT_POLICY_ID
 from ray.rllib.utils import merge_dicts
 
 import ray
-import cma
 
 
 def prune_weights(weights, probability):
@@ -35,6 +34,7 @@ def calculate_confidence(values):
 class PseudoEnsembleAgent(PPOTrainer):
     def __init__(self, config=None, env=None, logger_creator=None):
         super().__init__(config, env, logger_creator)
+
         self.ensemble_weights = []
         self.original_weights = []
 
@@ -114,14 +114,10 @@ class PseudoEnsembleAgent(PPOTrainer):
     def create_ensemble(self):
         self.ensemble_weights = []
 
-        # self.evolve()
-
         for i in range(8):
             w = deepcopy(self.original_weights)
-            new_weights = prune_weights(w, 0.1)
-            # new_weights = add_gaussian_noise(
-            #     deepcopy(self.original_weights), 0.1)
-
+            # new_weights = prune_weights(w, 0.1)
+            new_weights = add_gaussian_noise(w, 0.1)
             self.ensemble_weights.append(new_weights)
 
     # def evolve(self):

@@ -2,7 +2,7 @@ procgen-pe:
     env: procgen_env_wrapper
     run: PseudoEnsemble
     stop:
-        timesteps_total: 8000000
+        timesteps_total: 8
         time_total_s: 7200
 
     checkpoint_freq: 100
@@ -25,7 +25,7 @@ procgen-pe:
 
         gamma: 0.999
         lambda: 0.95
-        lr: 5.0e-4
+        lr: 1.0e-3
         num_sgd_iter: 3
         sgd_minibatch_size: 2048 # 8 minibatches per epoch
         train_batch_size: 16384 # 256 * 32
