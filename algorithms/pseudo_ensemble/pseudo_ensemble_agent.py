@@ -15,7 +15,6 @@ def prune_weights(weights, probability):
             for w in np.nditer(weights[layer], op_flags=['readwrite']):
                 if random() < probability:
                     w[...] = 0
-
     return weights
 
 
@@ -24,7 +23,6 @@ def add_gaussian_noise(weights, scale):
         if "hidden_fc.weight" in layer:
             for w in np.nditer(weights[layer], op_flags=['readwrite']):
                 w[...] += np.random.normal(0, scale)
-
     return weights
 
 
@@ -86,7 +84,7 @@ class PseudoEnsembleAgent(PPOTrainer):
             timestep=self.global_vars["timestep"])
 
         # If confidence is low, run through ensemble
-        if calculate_confidence(info['action_dist_inputs']) < 0.65:
+        if calculate_confidence(info['action_dist_inputs']) < 0.50:
             ensemble_actions = []
 
             for weights in self.ensemble_weights:
@@ -120,9 +118,9 @@ class PseudoEnsembleAgent(PPOTrainer):
 
         for i in range(8):
             w = deepcopy(self.original_weights)
-            # new_weights = prune_weights(w, 0.1)
-            new_weights = add_gaussian_noise(
-                deepcopy(self.original_weights), 0.1)
+            new_weights = prune_weights(w, 0.1)
+            # new_weights = add_gaussian_noise(
+            #     deepcopy(self.original_weights), 0.1)
 
             self.ensemble_weights.append(new_weights)
 
