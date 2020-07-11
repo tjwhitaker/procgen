@@ -26,6 +26,7 @@ procgen-pe:
         gamma: 0.999
         lambda: 0.95
         lr: 5.0e-4
+        lr_schedule: [[0, 5.0e-4],[8000000, 1.0e-4]]
         num_sgd_iter: 3
         sgd_minibatch_size: 2048 # 8 minibatches per epoch
         train_batch_size: 16384 # 256 * 32
@@ -54,14 +55,14 @@ procgen-pe:
             custom_options: {}
 
         num_workers: 4
-        num_envs_per_worker: 16
+        num_envs_per_worker: 20
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
 
         num_cpus_per_worker: 1
-        num_gpus_per_worker: 0.05
+        num_gpus_per_worker: 0.1
         num_cpus_for_driver: 1
-        num_gpus: 0.75
+        num_gpus: 0.5
 
         explore: True,
         exploration_config:
