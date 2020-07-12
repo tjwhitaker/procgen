@@ -2,7 +2,7 @@ procgen-pe:
     env: stacked_procgen_env
     run: PseudoEnsemble
     stop:
-        timesteps_total: 8000000
+        timesteps_total: 800000
         time_total_s: 7200
 
     checkpoint_freq: 100
@@ -57,12 +57,12 @@ procgen-pe:
         num_workers: 4
         num_envs_per_worker: 20
         rollout_fragment_length: 256
-        batch_mode: truncate_episodes
+        batch_mode: complete_episodes
 
         num_cpus_per_worker: 1
         num_gpus_per_worker: 0.1
         num_cpus_for_driver: 1
-        num_gpus: 0.5
+        num_gpus: 0.6
 
         explore: True,
         exploration_config:

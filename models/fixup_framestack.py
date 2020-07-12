@@ -48,8 +48,7 @@ class FixupFS(TorchModelV2, nn.Module):
         x = input_dict["obs"].float()
         b, f, h, w, c = x.shape
         x = x / 255.0  # scale to 0-1
-        x = x.permute(0, 1, 4, 2, 3)
-        x = x.reshape(b, f*c, h, w).contiguous()
+        x = x.permute(0, 1, 4, 2, 3).reshape(b, f*c, h, w).contiguous()
         x = self.conv_layers(x)
         x = nn.functional.relu(x)
         x = x.view(x.shape[0], -1)

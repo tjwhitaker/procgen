@@ -7,7 +7,7 @@ import math
 torch, nn = try_import_torch()
 
 
-class FixupCNN(TorchModelV2, nn.Module):
+class FixupFSGS(TorchModelV2, nn.Module):
     """
     A larger version of the IMPALA CNN with Fixup init.
     See Fixup: https://arxiv.org/abs/1901.09321.
@@ -93,4 +93,4 @@ class FixupResidual(nn.Module):
         return out + x
 
 
-ModelCatalog.register_custom_model("fixup_fs_gs", FixupCNN)
+ModelCatalog.register_custom_model("fixup_fs_gs", FixupFSGS)

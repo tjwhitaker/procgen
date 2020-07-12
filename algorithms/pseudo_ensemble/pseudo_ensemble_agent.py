@@ -3,7 +3,6 @@ from copy import deepcopy
 from random import random
 from ray.rllib.agents.ppo import PPOTrainer
 from ray.rllib.policy.sample_batch import DEFAULT_POLICY_ID
-
 import ray
 
 
@@ -98,6 +97,6 @@ class PseudoEnsembleAgent(PPOTrainer):
 
         for i in range(8):
             w = deepcopy(self.original_weights)
-            # new_weights = prune_weights(w, 0.1)
-            new_weights = add_gaussian_noise(w, 0.1)
+            new_weights = prune_weights(w, 0.1)
+            # new_weights = add_gaussian_noise(w, 0.1)
             self.ensemble_weights.append(new_weights)
