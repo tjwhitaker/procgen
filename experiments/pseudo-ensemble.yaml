@@ -2,7 +2,7 @@ procgen-pe:
     env: stacked_procgen_env
     run: PseudoEnsemble
     stop:
-        timesteps_total: 800000
+        timesteps_total: 8000000
         time_total_s: 7200
 
     checkpoint_freq: 100
