@@ -62,7 +62,7 @@ procgen-pe:
         num_cpus_per_worker: 1
         num_gpus_per_worker: 0.1
         num_cpus_for_driver: 1
-        num_gpus: 0.6
+        num_gpus: 0.5
 
         explore: True,
         exploration_config:
