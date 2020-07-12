@@ -1,5 +1,5 @@
 procgen-pe:
-    env: stacked_procgen_env
+    env: grayscale_stacked_procgen_env
     run: PseudoEnsemble
     stop:
         timesteps_total: 8000000
@@ -51,7 +51,7 @@ procgen-pe:
         use_pytorch: True
 
         model:
-            custom_model: fixup_fs
+            custom_model: fixup_fs_gs
             custom_options: {}
 
         num_workers: 4
