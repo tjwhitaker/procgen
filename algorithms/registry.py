@@ -13,17 +13,11 @@ An example integration of the random agent is shown here :
 """
 
 
-def _import_custom_random_agent():
-    from .custom_random_agent.custom_random_agent import CustomRandomAgent
-    return CustomRandomAgent
-
-
 def _import_pseudo_ensemble():
     from .pseudo_ensemble.pseudo_ensemble_agent import PseudoEnsembleAgent
     return PseudoEnsembleAgent
 
 
 CUSTOM_ALGORITHMS = {
-    "custom/CustomRandomAgent": _import_custom_random_agent,
     "PseudoEnsemble": _import_pseudo_ensemble
 }
