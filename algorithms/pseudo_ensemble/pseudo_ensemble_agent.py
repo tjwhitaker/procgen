@@ -65,7 +65,7 @@ class PseudoEnsembleAgent(PPOTrainer):
             timestep=self.global_vars["timestep"])
 
         # If confidence is low, run through ensemble
-        if calculate_confidence(info['action_dist_inputs']) < 0.50:
+        if calculate_confidence(info['action_dist_inputs']) < 0.0:
             ensemble_actions = []
 
             for weights in self.ensemble_weights:

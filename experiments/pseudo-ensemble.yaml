@@ -14,7 +14,7 @@ procgen-pe:
             env_name: coinrun
             num_levels: 0
             start_level: 0
-            paint_vel_info: True
+            paint_vel_info: False
             use_generated_assets: False
             center_agent: True
             use_sequential_levels: True
@@ -26,7 +26,7 @@ procgen-pe:
         gamma: 0.999
         lambda: 0.95
         lr: 5.0e-4
-        lr_schedule: [[0, 7.5e-4],[8000000, 3.5e-4]]
+        lr_schedule: [[0, 8.0e-4],[8000000, 4.0e-4]]
         num_sgd_iter: 3
         sgd_minibatch_size: 2048 # 8 minibatches per epoch
         train_batch_size: 16384 # 256 * 32
