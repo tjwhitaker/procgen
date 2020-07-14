@@ -23,6 +23,16 @@ def add_gaussian_noise(weights, scale):
     return weights
 
 
+def generate_population(pop_size, init_weights):
+    pop = []
+
+    for i in range(pop_size):
+        w = deepcopy(init_weights)
+        pop.append(prune_weights(w, 0.1))
+
+    return pop
+
+
 def calculate_confidence(values):
     x = values - max(values)
     softmax = np.exp(x) / np.sum(np.exp(x))
@@ -65,7 +75,7 @@ class PseudoEnsembleAgent(PPOTrainer):
             timestep=self.global_vars["timestep"])
 
         # If confidence is low, run through ensemble
-        if calculate_confidence(info['action_dist_inputs']) < 0.0:
+        if calculate_confidence(info['action_dist_inputs']) < 0.50:
             ensemble_actions = []
 
             for weights in self.ensemble_weights:
@@ -97,6 +107,21 @@ class PseudoEnsembleAgent(PPOTrainer):
 
         for i in range(8):
             w = deepcopy(self.original_weights)
-            new_weights = prune_weights(w, 0.1)
+            new_weights = prune_weights(w, 0.05)
             # new_weights = add_gaussian_noise(w, 0.1)
             self.ensemble_weights.append(new_weights)
+
+        # NK PE
+        # population_size = 8
+        # fitness_scores = []
+
+        # self.generate_population(population_size)
+        # self.evaluate_fitness()
+
+        # # Evaluate Fitness
+        # for i in range(population_size):
+        #     self.get_policy().set_weights(self.ensemble_weights[i])
+        #     metrics = self._evaluate()
+        #     fitness_scores.append(metrics['evaluation']['episode_reward_mean'])
+
+        # # Run NK Selection
