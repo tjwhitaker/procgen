@@ -1,5 +1,5 @@
 procgen-ppo:
-    env: grayscale_stacked_procgen_env
+    env: stacked_procgen_env
     run: PPO
     stop:
         timesteps_total: 8000000
@@ -49,13 +49,13 @@ procgen-ppo:
         use_pytorch: True
 
         model:
-            custom_model: fixup_fs_gs
+            custom_model: fixup_fs
             custom_options: {}
 
         num_workers: 4
         num_envs_per_worker: 20
         rollout_fragment_length: 256
-        batch_mode: complete_episodes
+        batch_mode: truncate_episodes
 
         num_cpus_per_worker: 1
         num_gpus_per_worker: 0.1
