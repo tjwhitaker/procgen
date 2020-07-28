@@ -26,7 +26,7 @@ class FixupCNN(TorchModelV2, nn.Module):
         depth_in = c
 
         layers = []
-        for depth_out in [32, 64, 64]:
+        for depth_out in [64, 128, 128]:
             layers.extend([
                 nn.Conv2d(depth_in, depth_out, 3, padding=1),
                 nn.MaxPool2d(3, stride=2, padding=1),
@@ -34,10 +34,10 @@ class FixupCNN(TorchModelV2, nn.Module):
                 FixupResidual(depth_out, 8),
             ])
             depth_in = depth_out
-        layers.extend([
-            FixupResidual(depth_in, 8),
-            FixupResidual(depth_in, 8),
-        ])
+        # layers.extend([
+        #     FixupResidual(depth_in, 8),
+        #     FixupResidual(depth_in, 8),
+        # ])
         self.conv_layers = nn.Sequential(*layers)
         self.hidden_fc = nn.Linear(
             in_features=4096, out_features=256)
@@ -93,4 +93,4 @@ class FixupResidual(nn.Module):
         return out + x
 
 
-ModelCatalog.register_custom_model("fixup_cnn", FixupCNN)
+ModelCatalog.register_custom_model("fixup", FixupCNN)
