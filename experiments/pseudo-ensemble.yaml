@@ -1,5 +1,5 @@
 procgen-pe:
-    env: procgen_env_wrapper
+    env: stacked_procgen_env
     run: PseudoEnsemble
     stop:
         timesteps_total: 8000000
@@ -42,7 +42,7 @@ procgen-pe:
         soft_horizon: False
         no_done_at_end: False
         normalize_actions: False
-        clip_rewards: True
+        clip_rewards: False
         clip_actions: True
         preprocessor_pref: deepmind
         ignore_worker_failures: False
@@ -50,7 +50,7 @@ procgen-pe:
         use_pytorch: True
 
         model:
-            custom_model: fixup
+            custom_model: fixup_fs
             custom_options: {}
 
         num_workers: 4
