@@ -1,5 +1,5 @@
 procgen-ppo:
-    env: procgen_env_wrapper
+    env: stacked_procgen_env
     run: PPO
     stop:
         timesteps_total: 8000000
@@ -10,17 +10,17 @@ procgen-ppo:
 
     config:
         env_config:
-            env_name: coinrun
+            env_name: bigfish
             num_levels: 0
             start_level: 0
             paint_vel_info: False
             use_generated_assets: False
-            center_agent: True
-            use_sequential_levels: True
-            restrict_themes: True
-            use_monochrome_assets: False
-            use_backgrounds: False
             distribution_mode: easy
+            center_agent: True
+            use_sequential_levels: False
+            use_backgrounds: True
+            restrict_themes: False
+            use_monochrome_assets: False
 
         gamma: 0.999
         lambda: 0.95
@@ -41,7 +41,7 @@ procgen-ppo:
         soft_horizon: False
         no_done_at_end: False
         normalize_actions: False
-        clip_rewards: True
+        clip_rewards: False
         clip_actions: True
         preprocessor_pref: deepmind
         ignore_worker_failures: False
@@ -49,7 +49,7 @@ procgen-ppo:
         use_pytorch: True
 
         model:
-            custom_model: fixup
+            custom_model: fixup_fs
             custom_options: {}
 
         num_workers: 4

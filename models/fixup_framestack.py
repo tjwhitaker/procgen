@@ -34,10 +34,10 @@ class FixupFS(TorchModelV2, nn.Module):
                 FixupResidual(depth_out, 8),
             ])
             depth_in = depth_out
-        layers.extend([
-            FixupResidual(depth_in, 8),
-            FixupResidual(depth_in, 8),
-        ])
+        # layers.extend([
+        #     FixupResidual(depth_in, 8),
+        #     FixupResidual(depth_in, 8),
+        # ])
         self.conv_layers = nn.Sequential(*layers)
         self.hidden_fc = nn.Linear(
             in_features=4096, out_features=256)
