@@ -51,7 +51,7 @@ procgen-ppo:
       custom_model: fixup_fs
       custom_options: {}
 
-    num_workers: 0
+    num_workers: 4
     num_envs_per_worker: 16
     rollout_fragment_length: 256
     batch_mode: complete_episodes
