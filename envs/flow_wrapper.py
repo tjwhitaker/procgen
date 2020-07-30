@@ -1,4 +1,7 @@
+from gym import Wrapper
 from gym.wrappers import LazyFrames
+from gym.spaces import Box
+from collections import deque
 import numpy as np
 from ray.tune import registry
 from envs.procgen_env_wrapper import ProcgenEnvWrapper

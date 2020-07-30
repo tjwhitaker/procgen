@@ -10,7 +10,7 @@ procgen-ppo:
 
   config:
     env_config:
-      env_name: coinrun
+      env_name: bigfish
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -40,7 +40,7 @@ procgen-ppo:
     soft_horizon: False
     no_done_at_end: False
     normalize_actions: False
-    clip_rewards: True
+    clip_rewards: False
     clip_actions: True
     preprocessor_pref: deepmind
     ignore_worker_failures: False
@@ -51,15 +51,15 @@ procgen-ppo:
       custom_model: fixup
       custom_options: {}
 
-    num_workers: 4
-    num_envs_per_worker: 20
+    num_workers: 0
+    num_envs_per_worker: 8
     rollout_fragment_length: 256
-    batch_mode: complete_episodes
+    batch_mode: truncate_episodes
 
     num_cpus_per_worker: 1
-    num_gpus_per_worker: 0.1
+    num_gpus_per_worker: 0
     num_cpus_for_driver: 1
-    num_gpus: 0.5
+    num_gpus: 1
 
     explore: True,
     exploration_config:
