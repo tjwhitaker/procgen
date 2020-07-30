@@ -1,76 +1,75 @@
 procgen-ppo:
-    env: stacked_procgen_env
-    run: PPO
-    stop:
-        timesteps_total: 8000000
+  env: stacked_procgen_env
+  run: PPO
+  stop:
+    timesteps_total: 8000000
 
-    checkpoint_freq: 100
-    checkpoint_at_end: True
-    keep_checkpoints_num: 5
+  checkpoint_freq: 100
+  checkpoint_at_end: True
+  keep_checkpoints_num: 5
 
-    config:
-        env_config:
-            env_name: bigfish
-            num_levels: 0
-            start_level: 0
-            paint_vel_info: False
-            use_generated_assets: False
-            distribution_mode: easy
-            center_agent: True
-            use_sequential_levels: False
-            use_backgrounds: True
-            restrict_themes: False
-            use_monochrome_assets: False
+  config:
+    env_config:
+      env_name: coinrun
+      num_levels: 0
+      start_level: 0
+      paint_vel_info: False
+      use_generated_assets: False
+      distribution_mode: easy
+      center_agent: True
+      use_sequential_levels: False
+      use_backgrounds: True
+      restrict_themes: False
+      use_monochrome_assets: False
 
-        gamma: 0.999
-        lambda: 0.95
-        lr: 5.0e-4
-        num_sgd_iter: 3
-        sgd_minibatch_size: 2048 # 8 minibatches per epoch
-        train_batch_size: 16384 # 256 * 32
-        kl_coeff: 0.5
-        kl_target: 0.01
-        vf_loss_coeff: 0.5
-        entropy_coeff: 0.001
-        clip_param: 0.2
-        vf_clip_param: 10.0
-        grad_clip: 0.5
-        observation_filter: NoFilter
-        vf_share_layers: True
-        horizon: null
-        soft_horizon: False
-        no_done_at_end: False
-        normalize_actions: False
-        clip_rewards: False
-        clip_actions: True
-        preprocessor_pref: deepmind
-        ignore_worker_failures: False
-        log_sys_usage: True
-        use_pytorch: True
+    gamma: 0.999
+    lambda: 0.95
+    lr: 5.0e-4
+    num_sgd_iter: 3
+    sgd_minibatch_size: 2048 # 8 minibatches per epoch
+    train_batch_size: 16384 # 256 * 32
+    kl_coeff: 0.5
+    kl_target: 0.01
+    vf_loss_coeff: 0.5
+    entropy_coeff: 0.01
+    clip_param: 0.2
+    vf_clip_param: 10.0
+    grad_clip: 0.5
+    vf_share_layers: True
+    horizon: null
+    soft_horizon: False
+    no_done_at_end: False
+    normalize_actions: False
+    clip_rewards: False
+    clip_actions: True
+    preprocessor_pref: deepmind
+    ignore_worker_failures: False
+    log_sys_usage: True
+    use_pytorch: True
 
-        model:
-            custom_model: fixup_fs
-            custom_options: {}
+    model:
+      custom_model: fixup_fs
+      custom_options: {}
 
-        num_workers: 4
-        num_envs_per_worker: 16
-        rollout_fragment_length: 256
-        batch_mode: truncate_episodes
+    num_workers: 0
+    num_envs_per_worker: 16
+    rollout_fragment_length: 256
+    batch_mode: complete_episodes
 
-        num_cpus_per_worker: 1
-        num_gpus_per_worker: 0.1
-        num_cpus_for_driver: 1
-        num_gpus: 0.5
+    num_cpus_per_worker: 1
+    num_gpus_per_worker: 0.1
+    num_cpus_for_driver: 1
+    num_gpus: 0.5
 
-        explore: True,
-        exploration_config:
-            type: "StochasticSampling"
+    explore: True,
+    exploration_config:
+      type: "StochasticSampling"
 
-        evaluation_config:
-            explore: False
+    evaluation_config:
+      explore: False
 
-        observation_filter: "NoFilter"
-        synchronize_filters: True
-        compress_observations: False
-        timesteps_per_iteration: 0
-        seed: null
+    observation_filter: "NoFilter"
+    synchronize_filters: True
+    compress_observations: False
+    timesteps_per_iteration: 0
+    seed: null
