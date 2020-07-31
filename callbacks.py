@@ -116,7 +116,16 @@ class CustomCallbacks(DefaultCallbacks):
                 object to modify the samples generated.
             kwargs: Forward compatibility placeholder.
         """
-        pass
+        rmin = np.amin(samples['rewards'])
+        rmax = np.amax(samples['rewards'])
+
+        if (rmax - rmin) != 0:
+            for i in range(len(samples['rewards'])):
+                samples['rewards'][i] = (
+                    samples['rewards'][i] - rmin) / (rmax - rmin)
+
+        print(np.amax(samples['rewards']))
+        print(samples['rewards'])
 
     def on_train_result(self, trainer, result: dict, **kwargs):
         """Called at the end of Trainable.train().
