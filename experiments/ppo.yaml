@@ -10,7 +10,7 @@ procgen-ppo:
 
   config:
     env_config:
-      env_name: coinrun
+      env_name: bigfish
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -36,11 +36,11 @@ procgen-ppo:
     vf_clip_param: 10.0
     grad_clip: 0.5
     vf_share_layers: True
-    horizon: null
+    horizon: 512
     soft_horizon: False
     no_done_at_end: False
     normalize_actions: False
-    clip_rewards: False
+    clip_rewards: True
     clip_actions: True
     preprocessor_pref: deepmind
     ignore_worker_failures: False
