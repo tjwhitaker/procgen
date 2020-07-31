@@ -124,9 +124,6 @@ class CustomCallbacks(DefaultCallbacks):
                 samples['rewards'][i] = (
                     samples['rewards'][i] - rmin) / (rmax - rmin)
 
-        print(np.amax(samples['rewards']))
-        print(samples['rewards'])
-
     def on_train_result(self, trainer, result: dict, **kwargs):
         """Called at the end of Trainable.train().
         Args:
