@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy
 from random import random
-from ray.rllib.agents.ppo import PPOTrainer
+from .pseudo_ensemble_trainer import PseudoEnsembleTrainer
 from ray.rllib.policy.sample_batch import DEFAULT_POLICY_ID
 
 import ray
@@ -30,7 +30,7 @@ def calculate_confidence(values):
     return max(softmax)
 
 
-class PseudoEnsembleAgent(PPOTrainer):
+class PseudoEnsembleAgent(PseudoEnsembleTrainer):
     def __init__(self, config=None, env=None, logger_creator=None):
         super().__init__(config, env, logger_creator)
         self.ensemble_weights = []
@@ -67,7 +67,7 @@ class PseudoEnsembleAgent(PPOTrainer):
             timestep=self.global_vars["timestep"])
 
         # If confidence is low, run through ensemble
-        if calculate_confidence(info['action_dist_inputs']) < 0.50:
+        if calculate_confidence(info['action_dist_inputs']) < 0.00:
             ensemble_actions = []
 
             for weights in self.ensemble_weights:
@@ -91,8 +91,8 @@ class PseudoEnsembleAgent(PPOTrainer):
 
     def restore(self, checkpoint_path):
         super().restore(checkpoint_path)
-        self.original_weights = self.get_policy().get_weights()
-        self.create_ensemble()
+        # self.original_weights = self.get_policy().get_weights()
+        # self.create_ensemble()
 
     def create_ensemble(self):
         self.ensemble_weights = []
