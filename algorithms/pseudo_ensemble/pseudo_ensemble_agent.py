@@ -36,6 +36,7 @@ class PseudoEnsembleAgent(PPOTrainer):
         self.ensemble_weights = []
         self.original_weights = []
 
+    # Should only be called during rollouts, not training
     def compute_action(self,
                        observation,
                        state=None,
@@ -96,7 +97,7 @@ class PseudoEnsembleAgent(PPOTrainer):
     def create_ensemble(self):
         self.ensemble_weights = []
 
-        for i in range(8):
+        for _ in range(8):
             w = deepcopy(self.original_weights)
             # new_weights = prune_weights(w, 0.1)
             new_weights = add_gaussian_noise(w, 0.1)
