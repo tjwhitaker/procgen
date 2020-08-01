@@ -38,7 +38,7 @@ procgen-pe:
         grad_clip: 0.5
         observation_filter: NoFilter
         vf_share_layers: True
-        horizon: 512
+        horizon: null
         soft_horizon: False
         no_done_at_end: False
         normalize_actions: False
