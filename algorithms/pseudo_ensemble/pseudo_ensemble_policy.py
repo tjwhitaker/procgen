@@ -12,13 +12,15 @@ def my_postprocess_ppo_gae(policy,
 
     completed = sample_batch["dones"][-1]
 
-    rmin = np.amin(sample_batch['rewards'])
-    rmax = np.amax(sample_batch['rewards'])
+    # rmin = np.amin(sample_batch['rewards'])
+    # rmax = np.amax(sample_batch['rewards'])
 
-    if (rmax - rmin) != 0:
-        for i in range(len(sample_batch['rewards'])):
-            sample_batch['rewards'][i] = (
-                sample_batch['rewards'][i] - rmin) / (rmax - rmin)
+    # if (rmax - rmin) != 0:
+    #     for i in range(len(sample_batch['rewards'])):
+    #         sample_batch['rewards'][i] = (
+    #             sample_batch['rewards'][i] - rmin) / (rmax - rmin)
+
+    # sample_batch["rewards"] += self.rnd.calculate_bonus(sample_batch["obs"])
 
     if completed:
         last_r = 0.0
