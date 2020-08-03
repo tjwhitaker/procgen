@@ -31,8 +31,8 @@ class CuriosityBonus(gym.Wrapper):
         self.episode_step += 1
 
         # Penalty for dieing?
-        if done and reward == 0:
-            reward = -0.5
+        # if done and reward == 0:
+        #     reward = -0.5
 
         # Curiosity Bonus
         bucket = int(self.episode_reward)
