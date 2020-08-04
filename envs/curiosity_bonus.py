@@ -37,16 +37,17 @@ class CuriosityBonus(gym.Wrapper):
                 reward += 0.1
 
         # Curiosity Bonus
-        bucket = int(self.episode_reward / 10)
-        key = str(bucket)
+        if self.env.env_name != "coinrun":
+            bucket = int(self.episode_reward / 10)
+            key = str(bucket)
 
-        for i in range(3):
-            channel_sum = np.sum(state[:, :, i])
-            key += "," + str(int(channel_sum / 33333))
+            for i in range(3):
+                channel_sum = np.sum(state[:, :, i])
+                key += "," + str(int(channel_sum / 33333))
 
-        if key not in self.state_history:
-            self.state_history[key] = True
-            reward += 0.1
+            if key not in self.state_history:
+                self.state_history[key] = True
+                reward += 0.1
 
         self.episode_reward += reward
         self.episode_step += 1
