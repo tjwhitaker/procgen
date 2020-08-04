@@ -13,6 +13,12 @@ class CuriosityBonus(gym.Wrapper):
     def __init__(self, env):
         super(CuriosityBonus, self).__init__(env)
 
+        self.env = env
+
+        # print(type(self.env))
+        # print(type(self.env.env))
+        # print(type(self.env.env.env))
+
         self.episode_reward = 0
         self.episode_step = 0
         self.state_history = {}
@@ -27,27 +33,30 @@ class CuriosityBonus(gym.Wrapper):
     def step(self, action):
         state, reward, done, info = self.env.step(action)
 
+        # test_state = self.env.env.env.callmethod("get_state")
+
+        # print(len(test_state[0]))
+
         # Time Bonus
-        if reward != 0:
-            if self.episode_step < 40:
-                reward += 1
-            elif self.episode_step < 80:
-                reward += 0.5
-            elif self.episode_step < 160:
-                reward += 0.1
+        # if reward > 0:
+        #     if self.episode_step < 40:
+        #         reward += 1
+        #     elif self.episode_step < 80:
+        #         reward += 0.5
+        #     elif self.episode_step < 160:
+        #         reward += 0.1
 
         # Curiosity Bonus
-        if self.env.env_name != "coinrun":
-            bucket = int(self.episode_reward / 10)
-            key = str(bucket)
+        # bucket = int(self.episode_reward / 10)
+        # key = str(bucket)
 
-            for i in range(3):
-                channel_sum = np.sum(state[:, :, i])
-                key += "," + str(int(channel_sum / 33333))
+        # for i in range(3):
+        #     channel_sum = np.sum(state[:, :, i])
+        #     key += "," + str(int(channel_sum / 33333))
 
-            if key not in self.state_history:
-                self.state_history[key] = True
-                reward += 0.1
+        # if key not in self.state_history:
+        #     self.state_history[key] = True
+        #     reward += 0.01
 
         self.episode_reward += reward
         self.episode_step += 1
