@@ -12,15 +12,40 @@ def my_postprocess_ppo_gae(policy,
 
     completed = sample_batch["dones"][-1]
 
-    # rmin = np.amin(sample_batch['rewards'])
-    # rmax = np.amax(sample_batch['rewards'])
+    # Log Scale Rewards
+    # for i in range(len(sample_batch['rewards'])):
+    #     if sample_batch['rewards'][i] >= 0:
+    #         sample_batch['rewards'][i] = np.log10(sample_batch['rewards'][i]+1)
 
-    # if (rmax - rmin) != 0:
-    #     for i in range(len(sample_batch['rewards'])):
-    #         sample_batch['rewards'][i] = (
-    #             sample_batch['rewards'][i] - rmin) / (rmax - rmin)
+    # Standardize
+    # Does not work. Mean shift causes problem
+    # sample_batch['rewards'] = (sample_batch['rewards'] - np.mean(
+    #     sample_batch['rewards'])) / (np.std(sample_batch['rewards']) + 1e-16)
 
-    # sample_batch["rewards"] += self.rnd.calculate_bonus(sample_batch["obs"])
+    # Normalize
+    # Works but not quite as well as clipping.
+    # Better with curiosity
+    rmin = np.amin(sample_batch['rewards'])
+    rmax = np.amax(sample_batch['rewards'])
+
+    if ((rmax - rmin) != 0) and (rmax >= 1):
+        for i in range(len(sample_batch['rewards'])):
+            sample_batch['rewards'][i] = (
+                sample_batch['rewards'][i] - rmin) / (rmax - rmin)
+
+    # Baseline Reduction
+    # total = np.sum(sample_batch['rewards'])
+
+    # for i in range(len(sample_batch['rewards'])):
+    #     if total != 0:
+    #         sample_batch['rewards'][i] = sample_batch['rewards'][i] - \
+    #             (1/total * sample_batch['rewards'][i])
+
+    # Clip Rewards
+    # for i in range(len(sample_batch['rewards'])):
+    #     sample_batch['rewards'][i] = np.sign(sample_batch['rewards'][i])
+
+    # print(sample_batch['rewards'])
 
     if completed:
         last_r = 0.0

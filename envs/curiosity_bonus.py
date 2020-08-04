@@ -27,24 +27,29 @@ class CuriosityBonus(gym.Wrapper):
     def step(self, action):
         state, reward, done, info = self.env.step(action)
 
-        self.episode_reward += reward
-        self.episode_step += 1
-
-        # Penalty for dieing?
-        # if done and reward == 0:
-        #     reward = -0.5
+        # Time Bonus
+        if reward != 0:
+            if self.episode_step < 40:
+                reward += 1
+            elif self.episode_step < 80:
+                reward += 0.5
+            elif self.episode_step < 160:
+                reward += 0.1
 
         # Curiosity Bonus
-        bucket = int(self.episode_reward)
+        bucket = int(self.episode_reward / 10)
         key = str(bucket)
 
         for i in range(3):
             channel_sum = np.sum(state[:, :, i])
-            key += "," + str(int(channel_sum / 30000))
+            key += "," + str(int(channel_sum / 33333))
 
         if key not in self.state_history:
             self.state_history[key] = True
             reward += 0.1
+
+        self.episode_reward += reward
+        self.episode_step += 1
 
         return state, reward, done, info
 
