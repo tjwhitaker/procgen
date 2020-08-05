@@ -31,7 +31,15 @@ class CuriosityBonus(gym.Wrapper):
         return self.env.reset(**kwargs)
 
     def step(self, action):
-        state, reward, done, info = self.env.step(action)
+        if self.env.env_name == 'coinrun' and self.episode_step > 400:
+            state, reward, done, info = self.env.step(-1)
+        elif self.env.env_name == 'miner' and self.episode_step > 350:
+            state, reward, done, info = self.env.step(-1)
+        else:
+            state, reward, done, info = self.env.step(action)
+
+        # print(self.episode_step)
+        # state, reward, done, info = self.env.step(-1)
 
         # test_state = self.env.env.env.callmethod("get_state")
 

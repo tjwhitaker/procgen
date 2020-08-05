@@ -67,7 +67,7 @@ class PseudoEnsembleAgent(PseudoEnsembleTrainer):
             timestep=self.global_vars["timestep"])
 
         # If confidence is low, run through ensemble
-        if calculate_confidence(info['action_dist_inputs']) < 0.50:
+        if calculate_confidence(info['action_dist_inputs']) < 0.00:
             ensemble_actions = []
 
             for weights in self.ensemble_weights:
@@ -89,16 +89,16 @@ class PseudoEnsembleAgent(PseudoEnsembleTrainer):
         else:
             return action
 
-    def restore(self, checkpoint_path):
-        super().restore(checkpoint_path)
-        self.original_weights = self.get_policy().get_weights()
-        self.create_ensemble()
+    # def restore(self, checkpoint_path):
+    #     super().restore(checkpoint_path)
+    #     self.original_weights = self.get_policy().get_weights()
+    #     self.create_ensemble()
 
-    def create_ensemble(self):
-        self.ensemble_weights = []
+    # def create_ensemble(self):
+    #     self.ensemble_weights = []
 
-        for _ in range(8):
-            w = deepcopy(self.original_weights)
-            # new_weights = prune_weights(w, 0.1)
-            new_weights = add_gaussian_noise(w, 0.1)
-            self.ensemble_weights.append(new_weights)
+    #     for _ in range(8):
+    #         w = deepcopy(self.original_weights)
+    #         # new_weights = prune_weights(w, 0.1)
+    #         new_weights = add_gaussian_noise(w, 0.1)
+    #         self.ensemble_weights.append(new_weights)

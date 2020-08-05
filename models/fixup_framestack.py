@@ -50,10 +50,10 @@ class FixupFS(TorchModelV2, nn.Module):
         x = x / 255.0  # scale to 0-1
         x = x.permute(0, 1, 4, 2, 3).reshape(b, f*c, h, w).contiguous()
         x = self.conv_layers(x)
-        x = nn.functional.relu(x)
+        x = nn.functional.leaky_relu(x)
         x = x.view(x.shape[0], -1)
         x = self.hidden_fc(x)
-        x = nn.functional.relu(x)
+        x = nn.functional.leaky_relu(x)
 
         logits = self.logits_fc(x)
         value = self.value_fc(x)
@@ -82,11 +82,11 @@ class FixupResidual(nn.Module):
         self.scale = nn.Parameter(torch.ones([depth, 1, 1]))
 
     def forward(self, x):
-        x = nn.functional.relu(x)
+        x = nn.functional.leaky_relu(x)
         out = x + self.bias1
         out = self.conv1(out)
         out = out + self.bias2
-        out = nn.functional.relu(out)
+        out = nn.functional.leaky_relu(out)
         out = out + self.bias3
         out = self.conv2(out)
         out = out * self.scale

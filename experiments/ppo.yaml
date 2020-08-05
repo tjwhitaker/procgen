@@ -2,7 +2,7 @@ procgen-ppo:
   env: stacked_procgen_env
   run: PPO
   stop:
-    timesteps_total: 8000000
+    timesteps_total: 80
 
   checkpoint_freq: 100
   checkpoint_at_end: True
@@ -48,7 +48,7 @@ procgen-ppo:
     use_pytorch: True
 
     model:
-      custom_model: impala_cnn_torch
+      custom_model: fixup_fs
       custom_options: {}
 
     num_workers: 0
