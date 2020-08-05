@@ -29,11 +29,10 @@ procgen-pe:
         num_sgd_iter: 3
         sgd_minibatch_size: 2048 # 8 minibatches per epoch
         train_batch_size: 16384 # 256 * 64
-        kl_coeff: 0.2
+        kl_coeff: 0.5
         kl_target: 0.01
         vf_loss_coeff: 0.5
-        entropy_coeff: 0.01
-        entropy_coeff_schedule: [[0, 0.01], [8000000, 0.0]]
+        entropy_coeff: 0.0
         clip_param: 0.2
         vf_clip_param: 9999.0
         grad_clip: 0.5
