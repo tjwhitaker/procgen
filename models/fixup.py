@@ -39,8 +39,7 @@ class FixupCNN(TorchModelV2, nn.Module):
             FixupResidual(depth_in, 8),
         ])
         self.conv_layers = nn.Sequential(*layers)
-        self.hidden_fc = nn.Linear(
-            in_features=4096, out_features=256)
+        self.hidden_fc = nn.Linear(in_features=4096, out_features=256)
         self.logits_fc = nn.Linear(in_features=256, out_features=num_outputs)
         self.value_fc = nn.Linear(in_features=256, out_features=1)
 
