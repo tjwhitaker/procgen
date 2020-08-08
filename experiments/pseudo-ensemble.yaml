@@ -10,7 +10,7 @@ procgen-pe:
 
     config:
         env_config:
-            env_name: bigfish
+            env_name: coinrun
             num_levels: 0
             start_level: 0
             paint_vel_info: False
@@ -21,17 +21,18 @@ procgen-pe:
             use_backgrounds: True
             restrict_themes: False
             use_monochrome_assets: False
+            rollout: False
 
         gamma: 0.999
         lambda: 0.95
-        lr: 3.5e-4
+        lr: 5.0e-4
         num_sgd_iter: 3
         sgd_minibatch_size: 2048 # 8 minibatches per epoch
         train_batch_size: 16384 # 256 * 32
-        kl_coeff: 0.2
+        kl_coeff: 0.5
         kl_target: 0.01
         vf_loss_coeff: 0.5
-        entropy_coeff: 0.0
+        entropy_coeff: 0.001
         clip_param: 0.2
         vf_clip_param: 9999.0
         grad_clip: 0.5
