@@ -1,17 +1,19 @@
 import gym
 import inspect
 import numpy as np
+from copy import copy
 from envs.procgen_env_wrapper import ProcgenEnvWrapper
 from collections import deque
 from ray.tune import registry
 
 
 class TimeLimit(gym.Wrapper):
-    def __init__(self, env):
+    def __init__(self, env, rollout):
         super(TimeLimit, self).__init__(env)
 
         self.env = env
         self.episode_step = 0
+        self.rollout = rollout
 
     def reset(self, **kwargs):
         self.episode_step = 0
@@ -19,21 +21,21 @@ class TimeLimit(gym.Wrapper):
         return self.env.reset(**kwargs)
 
     def step(self, action):
-        # if self.env.env_name == 'coinrun' and self.episode_step > 300:
-        #     state, reward, done, info = self.env.step(-1)
-        # elif self.env.env_name == 'miner' and self.episode_step > 300:
-        #     state, reward, done, info = self.env.step(-1)
-        # elif self.env.env_name == 'bigfish' and self.episode_step > 850:
-        #     state, reward, done, info = self.env.step(-1)
-        # else:
-        state, reward, done, info = self.env.step(action)
-
-        if hasattr(self.env, 'rollout') and not self.env.rollout:
-            if done and reward > 0:
-                self.env.step(-1)
-                done = False
-
         self.episode_step += 1
+
+        if self.env.env_name == 'coinrun' and self.episode_step > 300:
+            state, reward, done, info = self.env.step(-1)
+        elif self.env.env_name == 'miner' and self.episode_step > 300:
+            state, reward, done, info = self.env.step(-1)
+        elif self.env.env_name == 'bigfish' and self.episode_step > 850:
+            state, reward, done, info = self.env.step(-1)
+        else:
+            state, reward, done, info = self.env.step(action)
+
+        if not self.rollout:
+            if done and reward > 0:
+                self.episode_step = 0
+                done = False
 
         return state, reward, done, info
 
@@ -67,7 +69,13 @@ class FrameStack(gym.Wrapper):
         return np.concatenate(self.frames, axis=2)
 
 
+def create_env(config):
+    config = copy(config)
+    rollout = config.pop("rollout")
+    procgen = ProcgenEnvWrapper(config)
+    return FrameStack(TimeLimit(procgen, rollout), 4)
+
+
 registry.register_env(
-    "time_limit_fs",
-    lambda config: FrameStack(TimeLimit(ProcgenEnvWrapper(config)), 4),
+    "time_limit_fs", lambda config: create_env(config),
 )
