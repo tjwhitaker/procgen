@@ -53,7 +53,7 @@ procgen-pe:
             custom_model: fixup
             custom_options: {}
 
-        num_workers: 2
+        num_workers: 4
         num_envs_per_worker: 32
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
@@ -61,7 +61,7 @@ procgen-pe:
         num_cpus_per_worker: 1
         num_gpus_per_worker: 0.1
         num_cpus_for_driver: 1
-        num_gpus: 0.7
+        num_gpus: 0.5
 
         explore: True,
         exploration_config:
