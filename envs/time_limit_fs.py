@@ -27,7 +27,7 @@ class TimeLimit(gym.Wrapper):
             state, reward, done, info = self.env.step(-1)
         elif self.env.env_name == 'miner' and self.episode_step > 300:
             state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'bigfish' and self.episode_step > 850:
+        elif self.env.env_name == 'bigfish' and self.episode_step > 1000:
             state, reward, done, info = self.env.step(-1)
         else:
             state, reward, done, info = self.env.step(action)
@@ -74,7 +74,7 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     procgen = ProcgenEnvWrapper(config)
-    return FrameStack(TimeLimit(procgen, rollout), 2)
+    return FrameStack(TimeLimit(procgen, rollout), 4)
 
 
 registry.register_env(
