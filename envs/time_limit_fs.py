@@ -23,14 +23,14 @@ class TimeLimit(gym.Wrapper):
     def step(self, action):
         self.episode_step += 1
 
-        if self.env.env_name == 'coinrun' and self.episode_step > 300:
-            state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'miner' and self.episode_step > 300:
-            state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'bigfish' and self.episode_step > 1000:
-            state, reward, done, info = self.env.step(-1)
-        else:
-            state, reward, done, info = self.env.step(action)
+        # if self.env.env_name == 'coinrun' and self.episode_step > 300:
+        #     state, reward, done, info = self.env.step(-1)
+        # elif self.env.env_name == 'miner' and self.episode_step > 300:
+        #     state, reward, done, info = self.env.step(-1)
+        # elif self.env.env_name == 'bigfish' and self.episode_step > 1000:
+        #     state, reward, done, info = self.env.step(-1)
+        # else:
+        state, reward, done, info = self.env.step(action)
 
         if not self.rollout:
             if done and reward > 0:
