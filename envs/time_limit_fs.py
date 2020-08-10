@@ -34,7 +34,7 @@ class TimeLimit(gym.Wrapper):
 
         if not self.rollout:
             if done and reward > 0:
-                self.env.step(-1)
+                self.env.reset()
                 self.episode_step = 0
                 done = False
 
