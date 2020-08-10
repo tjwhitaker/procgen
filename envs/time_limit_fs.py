@@ -73,7 +73,7 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     procgen = ProcgenEnvWrapper(config)
-    return FrameStack(TimeLimit(procgen, rollout), 4)
+    return FrameStack(TimeLimit(procgen, rollout), 2)
 
 
 registry.register_env(
