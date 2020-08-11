@@ -9,8 +9,6 @@ from ray.tune import registry
 class EpisodicLife(gym.Wrapper):
     def __init__(self, env, rollout):
         super(EpisodicLife, self).__init__(env)
-
-        self.env = env
         self.rollout = rollout
 
     def step(self, action):
@@ -26,8 +24,6 @@ class EpisodicLife(gym.Wrapper):
 class TimeLimit(gym.Wrapper):
     def __init__(self, env):
         super(TimeLimit, self).__init__(env)
-
-        self.env = env
         self.episode_step = 0
 
     def reset(self, **kwargs):
@@ -38,11 +34,11 @@ class TimeLimit(gym.Wrapper):
     def step(self, action):
         self.episode_step += 1
 
-        if self.unwrapped.env_name == 'coinrun' and self.episode_step > 500:
+        if self.env.env_name == 'coinrun' and self.episode_step > 500:
             state, reward, done, info = self.env.step(-1)
-        elif self.unwrapped.env_name == 'miner' and self.episode_step > 500:
+        elif self.env.env_name == 'miner' and self.episode_step > 500:
             state, reward, done, info = self.env.step(-1)
-        elif self.unwrapped.env_name == 'bigfish' and self.episode_step > 1000:
+        elif self.env.env_name == 'bigfish' and self.episode_step > 1000:
             state, reward, done, info = self.env.step(-1)
         else:
             state, reward, done, info = self.env.step(action)
@@ -51,9 +47,7 @@ class TimeLimit(gym.Wrapper):
 
 class FrameStack(gym.Wrapper):
     def __init__(self, env, k):
-        """Stack k last frames."""
-        gym.Wrapper.__init__(self, env)
-        self.env = env
+        super(FrameStack, self).__init__(env)
         self.k = k
         self.frames = deque([], maxlen=k)
         shp = env.observation_space.shape
@@ -81,7 +75,6 @@ class FrameStack(gym.Wrapper):
 class FrameSkip(gym.Wrapper):
     def __init__(self, env, n):
         super(FrameSkip, self).__init__(env)
-        self.env = env
         self.n = n
 
     def reset(self, **kwargs):
@@ -91,7 +84,7 @@ class FrameSkip(gym.Wrapper):
         done = False
         total_reward = 0
 
-        if self.unwrapped.env_name == "bigfish" or self.unwrapped.env_name == "coinrun":
+        if self.env.env_name == "bigfish" or self.env.env_name == "coinrun":
             for _ in range(self.n):
                 state, reward, done, info = self.env.step(action)
                 total_reward += reward
@@ -100,9 +93,6 @@ class FrameSkip(gym.Wrapper):
             state, total_reward, done, info = self.env.step(action)
 
         return state, total_reward, done, info
-
-    def seed(self, s):
-        self.rng.seed(s)
 
 def create_env(config):
     config = copy(config)
