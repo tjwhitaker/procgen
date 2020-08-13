@@ -104,7 +104,6 @@ def create_env(config):
     env = FrameSkip(env, 4)
     return env
 
-
 registry.register_env(
     "custom_wrapper", lambda config: create_env(config),
 )
