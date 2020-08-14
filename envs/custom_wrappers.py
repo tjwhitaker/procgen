@@ -97,7 +97,7 @@ def create_env(config):
     env = ProcgenEnvWrapper(config)
     # env = EpisodicLife(env, rollout)
     # env = TimeLimit(env)
-    env = FrameStack(env, 4)
+    # env = FrameStack(env, 4)
     env = FrameSkip(env, 4)
     return env
 
