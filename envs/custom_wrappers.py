@@ -77,9 +77,6 @@ class FrameSkip(gym.Wrapper):
         super(FrameSkip, self).__init__(env)
         self.n = n
 
-    def reset(self, **kwargs):
-        return self.env.reset(**kwargs)
-
     def step(self, action):
         done = False
         total_reward = 0
@@ -99,7 +96,7 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     # env = EpisodicLife(env, rollout)
-    env = TimeLimit(env)
+    # env = TimeLimit(env)
     env = FrameStack(env, 4)
     env = FrameSkip(env, 4)
     return env
