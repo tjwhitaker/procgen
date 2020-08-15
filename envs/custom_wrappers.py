@@ -6,6 +6,7 @@ from envs.procgen_env_wrapper import ProcgenEnvWrapper
 from collections import deque
 from ray.tune import registry
 
+
 class EpisodicLife(gym.Wrapper):
     def __init__(self, env, rollout):
         super(EpisodicLife, self).__init__(env)
@@ -21,15 +22,15 @@ class EpisodicLife(gym.Wrapper):
 
         return state, reward, done, info
 
+
 class TimeLimit(gym.Wrapper):
     def __init__(self, env):
         super(TimeLimit, self).__init__(env)
         self.episode_step = 0
 
-    def reset(self, **kwargs):
+    def reset(self):
         self.episode_step = 0
-
-        return self.env.reset(**kwargs)
+        return self.env.reset()
 
     def step(self, action):
         self.episode_step += 1
@@ -44,6 +45,7 @@ class TimeLimit(gym.Wrapper):
             state, reward, done, info = self.env.step(action)
 
         return state, reward, done, info
+
 
 class FrameStack(gym.Wrapper):
     def __init__(self, env, k):
@@ -72,6 +74,7 @@ class FrameStack(gym.Wrapper):
         assert len(self.frames) == self.k
         return np.concatenate(self.frames, axis=2)
 
+
 class FrameSkip(gym.Wrapper):
     def __init__(self, env, n):
         super(FrameSkip, self).__init__(env)
@@ -85,21 +88,24 @@ class FrameSkip(gym.Wrapper):
             for _ in range(self.n):
                 state, reward, done, info = self.env.step(action)
                 total_reward += reward
-                if done: break
+                if done:
+                    break
         else:
             state, total_reward, done, info = self.env.step(action)
 
         return state, total_reward, done, info
 
+
 def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
-    # env = EpisodicLife(env, rollout)
-    # env = TimeLimit(env)
-    # env = FrameStack(env, 4)
+    env = EpisodicLife(env, rollout)
+    env = TimeLimit(env)
+    env = FrameStack(env, 4)
     env = FrameSkip(env, 4)
     return env
+
 
 registry.register_env(
     "custom_wrapper", lambda config: create_env(config),
