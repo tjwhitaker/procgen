@@ -100,9 +100,9 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
-    # env = EpisodicLife(env, rollout)
+    env = EpisodicLife(env, rollout)
     env = TimeLimit(env)
-    env = FrameStack(env, 4)
+    env = FrameStack(env, 2)
     env = FrameSkip(env, 2)
     return env
 
