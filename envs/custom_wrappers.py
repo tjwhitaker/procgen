@@ -1,6 +1,7 @@
 import gym
 import inspect
 import numpy as np
+from gym.wrappers import GrayScaleObservation
 from copy import copy
 from envs.procgen_env_wrapper import ProcgenEnvWrapper
 from collections import deque
@@ -107,6 +108,7 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
+    # env = GrayScaleObservation(env, keep_dim=True)
     env = TimeLimit(env, rollout)
     env = ContinuousLife(env, rollout)
     env = FrameStack(env, 4)
