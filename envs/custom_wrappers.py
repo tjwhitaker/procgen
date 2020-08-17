@@ -7,26 +7,11 @@ from collections import deque
 from ray.tune import registry
 
 
-class EpisodicLife(gym.Wrapper):
-    def __init__(self, env, rollout):
-        super(EpisodicLife, self).__init__(env)
-        self.rollout = rollout
-
-    def step(self, action):
-        state, reward, done, info = self.env.step(action)
-
-        if not self.rollout:
-            if done and reward > 0:
-                self.env.reset()
-                done = False
-
-        return state, reward, done, info
-
-
 class TimeLimit(gym.Wrapper):
-    def __init__(self, env):
+    def __init__(self, env, rollout):
         super(TimeLimit, self).__init__(env)
         self.episode_step = 0
+        self.rollout = rollout
 
     def reset(self):
         self.episode_step = 0
@@ -35,14 +20,36 @@ class TimeLimit(gym.Wrapper):
     def step(self, action):
         self.episode_step += 1
 
-        if self.env.env_name == 'coinrun' and self.episode_step > 350:
-            state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'miner' and self.episode_step > 350:
-            state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'bigfish' and self.episode_step > 850:
-            state, reward, done, info = self.env.step(-1)
+        # Only implement time limit for training
+        if not self.rollout:
+            if self.env.env_name == 'coinrun' and self.episode_step > 350:
+                state, reward, done, info = self.env.step(-1)
+            elif self.env.env_name == 'miner' and self.episode_step > 350:
+                state, reward, done, info = self.env.step(-1)
+            elif self.env.env_name == 'bigfish' and self.episode_step > 850:
+                state, reward, done, info = self.env.step(-1)
+            else:
+                state, reward, done, info = self.env.step(action)
         else:
             state, reward, done, info = self.env.step(action)
+
+        return state, reward, done, info
+
+
+class ContinuousLife(gym.Wrapper):
+    def __init__(self, env, rollout):
+        super(ContinuousLife, self).__init__(env)
+        self.rollout = rollout
+
+    def step(self, action):
+        state, reward, done, info = self.env.step(action)
+
+        # When we complete a level:
+        # Load the next level without ending the episode
+        if not self.rollout:
+            if done and reward > 0:
+                self.env.reset()
+                done = False
 
         return state, reward, done, info
 
@@ -84,7 +91,7 @@ class FrameSkip(gym.Wrapper):
         done = False
         total_reward = 0
 
-        if self.env.env_name != "miner":
+        if self.env.env_name == "bigfish" or self.env.env_name == "coinrun":
             for _ in range(self.n):
                 state, reward, done, info = self.env.step(action)
                 total_reward += reward
@@ -100,9 +107,9 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
-    env = EpisodicLife(env, rollout)
-    # env = TimeLimit(env)
-    env = FrameStack(env, 2)
+    env = TimeLimit(env, rollout)
+    env = ContinuousLife(env, rollout)
+    env = FrameStack(env, 4)
     env = FrameSkip(env, 2)
     return env
 
