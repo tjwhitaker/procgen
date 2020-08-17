@@ -105,7 +105,7 @@ def create_env(config):
     env = ProcgenEnvWrapper(config)
     env = TimeLimit(env, rollout)
     env = ContinuousLife(env, rollout)
-    env = FrameStack(env, 4)
+    env = FrameStack(env, 2)
     env = FrameSkip(env, 2)
     return env
 
