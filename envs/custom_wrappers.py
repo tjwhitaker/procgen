@@ -87,14 +87,11 @@ class FrameSkip(gym.Wrapper):
         done = False
         total_reward = 0
 
-        if self.env.env_name == "bigfish" or self.env.env_name == "coinrun":
-            for _ in range(self.n):
-                state, reward, done, info = self.env.step(action)
-                total_reward += reward
-                if done:
-                    break
-        else:
-            state, total_reward, done, info = self.env.step(action)
+        for _ in range(self.n):
+            state, reward, done, info = self.env.step(action)
+            total_reward += reward
+            if done:
+                break
 
         return state, total_reward, done, info
 
