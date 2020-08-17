@@ -20,12 +20,16 @@ class TimeLimit(gym.Wrapper):
     def step(self, action):
         self.episode_step += 1
 
-        if self.env.env_name == 'coinrun' and self.episode_step > 300:
-            state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'miner' and self.episode_step > 300:
-            state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'bigfish' and self.episode_step > 800:
-            state, reward, done, info = self.env.step(-1)
+        # Only implement time limit for training
+        if not self.rollout:
+            if self.env.env_name == 'coinrun' and self.episode_step > 250:
+                state, reward, done, info = self.env.step(-1)
+            elif self.env.env_name == 'miner' and self.episode_step > 250:
+                state, reward, done, info = self.env.step(-1)
+            elif self.env.env_name == 'bigfish' and self.episode_step > 750:
+                state, reward, done, info = self.env.step(-1)
+            else:
+                state, reward, done, info = self.env.step(action)
         else:
             state, reward, done, info = self.env.step(action)
 
@@ -103,7 +107,7 @@ def create_env(config):
     env = TimeLimit(env, rollout)
     env = ContinuousLife(env, rollout)
     env = FrameStack(env, 4)
-    # env = FrameSkip(env, 2)
+    # env = FrameSkip(env, 4)
     return env
 
 
