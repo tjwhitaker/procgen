@@ -10,7 +10,8 @@ from ray.tune import registry
 class ReduceActions(gym.Wrapper):
     def __init__(self, env):
         super(ReduceActions, self).__init__(env)
-        self.action_space = gym.spaces.Discrete(9)
+        if self.env.env_name == "coinrun" or self.env.env_name == "bigfish" or self.env.env_name == "miner":
+            self.action_space = gym.spaces.Discrete(9)
 
 
 class TimeLimit(gym.Wrapper):
@@ -26,11 +27,11 @@ class TimeLimit(gym.Wrapper):
     def step(self, action):
         self.episode_step += 1
 
-        if self.env.env_name == 'coinrun' and self.episode_step > 500:
+        if self.env.env_name == 'coinrun' and self.episode_step > 300:
             state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'miner' and self.episode_step > 500:
+        elif self.env.env_name == 'miner' and self.episode_step > 300:
             state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'bigfish' and self.episode_step > 1000:
+        elif self.env.env_name == 'bigfish' and self.episode_step > 800:
             state, reward, done, info = self.env.step(-1)
         else:
             state, reward, done, info = self.env.step(action)
