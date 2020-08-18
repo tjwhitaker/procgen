@@ -22,6 +22,8 @@ class FixupCNN(TorchModelV2, nn.Module):
                               model_config, name)
         nn.Module.__init__(self)
 
+        print(action_space)
+
         h, w, c = obs_space.shape
         depth_in = c
 

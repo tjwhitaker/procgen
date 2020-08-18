@@ -7,6 +7,12 @@ from collections import deque
 from ray.tune import registry
 
 
+class ReduceActions(gym.Wrapper):
+    def __init__(self, env):
+        super(ReduceActions, self).__init__(env)
+        self.action_space = gym.spaces.Discrete(9)
+
+
 class TimeLimit(gym.Wrapper):
     def __init__(self, env, rollout):
         super(TimeLimit, self).__init__(env)
@@ -102,6 +108,7 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
+    env = ReduceActions(env)
     env = TimeLimit(env, rollout)
     env = ContinuousLife(env, rollout)
     env = FrameStack(env, 4)
