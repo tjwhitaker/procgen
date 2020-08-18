@@ -59,9 +59,9 @@ procgen-pe:
         batch_mode: truncate_episodes
 
         num_cpus_per_worker: 1
-        num_gpus_per_worker: 0.1
+        num_gpus_per_worker: 0.05
         num_cpus_for_driver: 1
-        num_gpus: 0.5
+        num_gpus: 0.75
 
         explore: True,
         exploration_config:

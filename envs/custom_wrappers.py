@@ -26,7 +26,7 @@ class TimeLimit(gym.Wrapper):
                 state, reward, done, info = self.env.step(-1)
             elif self.env.env_name == 'miner' and self.episode_step > 300:
                 state, reward, done, info = self.env.step(-1)
-            elif self.env.env_name == 'bigfish' and self.episode_step > 1000:
+            elif self.env.env_name == 'bigfish' and self.episode_step > 850:
                 state, reward, done, info = self.env.step(-1)
             else:
                 state, reward, done, info = self.env.step(action)
@@ -88,7 +88,6 @@ class FrameSkip(gym.Wrapper):
         self.n = n
 
     def step(self, action):
-        done = False
         total_reward = 0
 
         if self.env.env_name == "bigfish" or self.env.env_name == "coinrun":
