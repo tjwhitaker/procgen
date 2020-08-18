@@ -22,11 +22,11 @@ class TimeLimit(gym.Wrapper):
 
         # Only implement time limit for training
         if not self.rollout:
-            if self.env.env_name == 'coinrun' and self.episode_step > 250:
+            if self.env.env_name == 'coinrun' and self.episode_step > 300:
                 state, reward, done, info = self.env.step(-1)
-            elif self.env.env_name == 'miner' and self.episode_step > 250:
+            elif self.env.env_name == 'miner' and self.episode_step > 300:
                 state, reward, done, info = self.env.step(-1)
-            elif self.env.env_name == 'bigfish' and self.episode_step > 750:
+            elif self.env.env_name == 'bigfish' and self.episode_step > 1000:
                 state, reward, done, info = self.env.step(-1)
             else:
                 state, reward, done, info = self.env.step(action)
@@ -91,11 +91,14 @@ class FrameSkip(gym.Wrapper):
         done = False
         total_reward = 0
 
-        for _ in range(self.n):
-            state, reward, done, info = self.env.step(action)
-            total_reward += reward
-            if done:
-                break
+        if self.env.env_name == "bigfish" or self.env.env_name == "coinrun":
+            for _ in range(self.n):
+                state, reward, done, info = self.env.step(action)
+                total_reward += reward
+                if done:
+                    break
+        else:
+            state, total_reward, done, info = self.env.step(action)
 
         return state, total_reward, done, info
 
@@ -107,7 +110,7 @@ def create_env(config):
     env = TimeLimit(env, rollout)
     env = ContinuousLife(env, rollout)
     env = FrameStack(env, 2)
-    # env = FrameSkip(env, 4)
+    env = FrameSkip(env, 2)
     return env
 
 
