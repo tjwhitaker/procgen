@@ -10,7 +10,7 @@ procgen-pe:
 
     config:
         env_config:
-            env_name: bigfish
+            env_name: coinrun
             num_levels: 0
             start_level: 0
             paint_vel_info: False
@@ -53,7 +53,7 @@ procgen-pe:
             custom_model: fixup
             custom_options: {}
 
-        num_workers: 4
+        num_workers: 2
         num_envs_per_worker: 32
         rollout_fragment_length: 256
         batch_mode: truncate_episodes

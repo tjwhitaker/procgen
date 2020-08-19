@@ -10,8 +10,31 @@ from ray.tune import registry
 class ReduceActions(gym.Wrapper):
     def __init__(self, env):
         super(ReduceActions, self).__init__(env)
-        if self.env.env_name == "coinrun" or self.env.env_name == "bigfish" or self.env.env_name == "miner":
+        self.action_map = [*range(15)]
+
+        # Coinrun
+        # L, LU, U, RU, R, ()
+        # 1, 2, 4, 5, 7, 8
+        if self.env.env_name == "coinrun":
+            self.action_map = [1, 2, 4, 5, 7, 8]
+            self.action_space = gym.spaces.Discrete(6)
+
+        # Bigfish
+        # L, LU, U, RU, R, RD, D, LD, ()
+        # 0, 1, 2, 3, 4, 5, 6, 7, 8
+        if self.env.env_name == "bigfish":
+            self.action_map = [0, 1, 2, 3, 4, 5, 6, 7, 8]
             self.action_space = gym.spaces.Discrete(9)
+
+        # Miner
+        # L, D, R, U
+        # 1, 3, 5, 7
+        if self.env.env_name == "miner":
+            self.action_map = [1, 3, 5, 7]
+            self.action_space = gym.spaces.Discrete(4)
+
+    def step(self, action):
+        return self.env.step(self.action_map[action])
 
 
 class TimeLimit(gym.Wrapper):
@@ -27,11 +50,11 @@ class TimeLimit(gym.Wrapper):
     def step(self, action):
         self.episode_step += 1
 
-        if self.env.env_name == 'coinrun' and self.episode_step > 300:
+        if self.env.env_name == 'coinrun' and self.episode_step > 350:
             state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'miner' and self.episode_step > 300:
+        elif self.env.env_name == 'miner' and self.episode_step > 350:
             state, reward, done, info = self.env.step(-1)
-        elif self.env.env_name == 'bigfish' and self.episode_step > 800:
+        elif self.env.env_name == 'bigfish' and self.episode_step > 850:
             state, reward, done, info = self.env.step(-1)
         else:
             state, reward, done, info = self.env.step(action)
@@ -47,8 +70,6 @@ class ContinuousLife(gym.Wrapper):
     def step(self, action):
         state, reward, done, info = self.env.step(action)
 
-        # When we complete a level:
-        # Load the next level without ending the episode
         if not self.rollout:
             if done and reward > 0:
                 self.env.reset()
@@ -112,7 +133,7 @@ def create_env(config):
     env = ReduceActions(env)
     env = TimeLimit(env, rollout)
     env = ContinuousLife(env, rollout)
-    env = FrameStack(env, 4)
+    env = FrameStack(env, 2)
     env = FrameSkip(env, 2)
     return env
 
