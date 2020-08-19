@@ -22,8 +22,6 @@ class FixupCNN(TorchModelV2, nn.Module):
                               model_config, name)
         nn.Module.__init__(self)
 
-        print(action_space)
-
         h, w, c = obs_space.shape
         depth_in = c
 
@@ -47,7 +45,7 @@ class FixupCNN(TorchModelV2, nn.Module):
 
     def forward(self, input_dict, state, seq_lens):
         x = input_dict["obs"].float()
-        x = x / 255.0  # scale to 0-1
+        x = x / 255.0
         x = x.permute(0, 3, 1, 2).contiguous()
         x = self.conv_layers(x)
         x = nn.functional.relu(x)
