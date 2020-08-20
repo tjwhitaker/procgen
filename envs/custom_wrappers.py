@@ -20,11 +20,11 @@ class ReduceActions(gym.Wrapper):
             self.action_space = gym.spaces.Discrete(6)
 
         # Bigfish
-        # L, LU, U, RU, R, RD, D, LD, ()
-        # 0, 1, 2, 3, 4, 5, 6, 7, 8
+        # L, LU, U, RU, R, RD, D, LD
+        # 0, 1, 2, 3, 5, 6, 7, 8
         if self.env.env_name == "bigfish":
-            self.action_map = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-            self.action_space = gym.spaces.Discrete(9)
+            self.action_map = [0, 1, 2, 3, 5, 6, 7, 8]
+            self.action_space = gym.spaces.Discrete(8)
 
         # Miner
         # L, D, R, U
@@ -134,7 +134,7 @@ def create_env(config):
     env = TimeLimit(env, rollout)
     env = ContinuousLife(env, rollout)
     # env = FrameStack(env, 2)
-    # env = FrameSkip(env, 2)
+    env = FrameSkip(env, 2)
     return env
 
 
