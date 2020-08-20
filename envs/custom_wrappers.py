@@ -114,7 +114,7 @@ class FrameSkip(gym.Wrapper):
     def step(self, action):
         total_reward = 0
 
-        if self.env.env_name == "bigfish" or self.env.env_name == "coinrun":
+        if self.env.env_name == "coinrun":
             for _ in range(self.n):
                 state, reward, done, info = self.env.step(action)
                 total_reward += reward
@@ -134,7 +134,7 @@ def create_env(config):
     env = TimeLimit(env, rollout)
     env = ContinuousLife(env, rollout)
     env = FrameStack(env, 4)
-    # env = FrameSkip(env, 2)
+    env = FrameSkip(env, 2)
     return env
 
 
