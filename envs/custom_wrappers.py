@@ -15,8 +15,8 @@ class ReduceActions(gym.Wrapper):
         # Algo.
         # Take 10 steps of no action: 4
         # Take 10 steps of special actions: 9-14
-        # Take 10 steps of movement actions: 0-8
         # How do the state observations compare?
+        # Can we say with certainty the special action do something?
 
 
 class ContinuousLife(gym.Wrapper):
@@ -89,7 +89,7 @@ def create_env(config):
     env = ProcgenEnvWrapper(config)
     # env = ReduceActions(env)
     env = ContinuousLife(env, rollout)
-    env = FrameStack(env, 3)
+    # env = FrameStack(env, 3)
     # env = FrameSkip(env, 1)
     return env
 
