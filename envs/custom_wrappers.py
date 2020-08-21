@@ -11,12 +11,31 @@ class ReduceActions(gym.Wrapper):
     def __init__(self, env):
         super(ReduceActions, self).__init__(env)
 
-        # Reduce or not?
-        # Algo.
-        # Take 10 steps of no action: 4
-        # Take 10 steps of special actions: 9-14
-        # How do the state observations compare?
-        # Can we say with certainty the special action do something?
+        # Remove diagonal directions?
+        self.action_map = [1, 3, 5, 7, 9, 10, 11, 12, 13, 14]
+        self.action_space = gym.spaces.Discrete(10)
+
+    def step(self, action):
+        return self.env.step(self.action_map[action])
+
+
+# class ActionRewardHistory(gym.Wrapper):
+#     def __init__(self, env):
+#         super(ActionRewardHistory, self).__init__(env)
+#         self.action_history = []
+#         self.reward_history = []
+
+#     def reset(self):
+#         self.action_history = []
+#         self.reward_history = []
+
+#     def step(self, action):
+#         state, reward, done, info = self.env.step(action)
+
+#         self.action_history.append(action)
+#         self.reward_history.append(reward)
+
+#         return state, reward, done, info
 
 
 class ContinuousLife(gym.Wrapper):
@@ -71,14 +90,11 @@ class FrameSkip(gym.Wrapper):
     def step(self, action):
         total_reward = 0
 
-        if self.env.env_name == "coinrun" or self.env.env_name == "bigfish":
-            for _ in range(self.n):
-                state, reward, done, info = self.env.step(action)
-                total_reward += reward
-                if done:
-                    break
-        else:
-            state, total_reward, done, info = self.env.step(action)
+        for _ in range(self.n):
+            state, reward, done, info = self.env.step(action)
+            total_reward += reward
+            if done:
+                break
 
         return state, total_reward, done, info
 
@@ -88,8 +104,8 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     # env = ReduceActions(env)
-    env = ContinuousLife(env, rollout)
-    # env = FrameStack(env, 3)
+    # env = ContinuousLife(env, rollout)
+    env = FrameStack(env, 3)
     # env = FrameSkip(env, 1)
     return env
 
