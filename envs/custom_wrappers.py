@@ -7,6 +7,18 @@ from collections import deque
 from ray.tune import registry
 
 
+class ReduceActions(gym.Wrapper):
+    def __init__(self, env):
+        super(ReduceActions, self).__init__(env)
+
+        # Reduce or not?
+        # Algo.
+        # Take 10 steps of no action: 4
+        # Take 10 steps of special actions: 9-14
+        # Take 10 steps of movement actions: 0-8
+        # How do the state observations compare?
+
+
 class ContinuousLife(gym.Wrapper):
     def __init__(self, env, rollout):
         super(ContinuousLife, self).__init__(env)
@@ -59,11 +71,14 @@ class FrameSkip(gym.Wrapper):
     def step(self, action):
         total_reward = 0
 
-        for _ in range(self.n):
-            state, reward, done, info = self.env.step(action)
-            total_reward += reward
-            if done:
-                break
+        if self.env.env_name == "coinrun" or self.env.env_name == "bigfish":
+            for _ in range(self.n):
+                state, reward, done, info = self.env.step(action)
+                total_reward += reward
+                if done:
+                    break
+        else:
+            state, total_reward, done, info = self.env.step(action)
 
         return state, total_reward, done, info
 
@@ -72,9 +87,10 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
-    # env = ContinuousLife(env, rollout)
+    # env = ReduceActions(env)
+    env = ContinuousLife(env, rollout)
     env = FrameStack(env, 3)
-    env = FrameSkip(env, 1)
+    # env = FrameSkip(env, 1)
     return env
 
 

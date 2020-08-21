@@ -1,6 +1,6 @@
 procgen-pe:
     env: custom_wrapper
-    run: PPO
+    run: PseudoEnsemble
     stop:
         timesteps_total: 8000000
 
