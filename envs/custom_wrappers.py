@@ -7,35 +7,44 @@ from collections import deque
 from ray.tune import registry
 
 
+# class DeliberatePractice(gym.Wrapper):
+#     def __init__(self, env):
+#         super(DeliberatePractice, self).__init__(env)
+#         self.env_state = []
+
+#     def reset(self):
+#         self.env_state = self.env.env.env.callmethod("get_state")
+#         print(states)
+
+
 class ReduceActions(gym.Wrapper):
     def __init__(self, env):
         super(ReduceActions, self).__init__(env)
+        self.action_space = self.test_action_space()
 
-        # Remove diagonal directions?
-        self.action_map = [1, 3, 5, 7, 9, 10, 11, 12, 13, 14]
-        self.action_space = gym.spaces.Discrete(10)
+    def test_action_space(self):
+        truth = []
+        base_state = self.env.env.env.callmethod("get_state")
 
-    def step(self, action):
-        return self.env.step(self.action_map[action])
+        # Test Special Actions
+        for _ in range(5):
+            a, _, _, _ = self.env.step(4)
 
+        self.env.env.env.callmethod("set_state", base_state)
 
-# class ActionRewardHistory(gym.Wrapper):
-#     def __init__(self, env):
-#         super(ActionRewardHistory, self).__init__(env)
-#         self.action_history = []
-#         self.reward_history = []
+        for action in [9, 10, 11, 12, 13, 14]:
+            for _ in range(5):
+                b, _, _, _ = self.env.step(action)
+            test_state = a == b
+            truth.append(test_state.all())
+            self.env.env.env.callmethod("set_state", base_state)
 
-#     def reset(self):
-#         self.action_history = []
-#         self.reward_history = []
+        self.env.step(-1)
 
-#     def step(self, action):
-#         state, reward, done, info = self.env.step(action)
-
-#         self.action_history.append(action)
-#         self.reward_history.append(reward)
-
-#         return state, reward, done, info
+        if all(truth):
+            return gym.spaces.Discrete(9)
+        else:
+            return gym.spaces.Discrete(15)
 
 
 class ContinuousLife(gym.Wrapper):
@@ -103,10 +112,10 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
-    # env = ReduceActions(env)
+    env = ReduceActions(env)
     # env = ContinuousLife(env, rollout)
-    env = FrameStack(env, 3)
-    # env = FrameSkip(env, 1)
+    env = FrameStack(env, 4)
+    # env = FrameSkip(env, 2)
     return env
 
 
