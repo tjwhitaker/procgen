@@ -22,7 +22,6 @@ class ReduceActions(gym.Wrapper):
         super(ReduceActions, self).__init__(env)
         self.action_map = []
         self.test_action_space()
-        print(self.action_space)
 
     def step(self, action):
         return self.env.step(self.action_map[action])
@@ -32,7 +31,7 @@ class ReduceActions(gym.Wrapper):
         # Initial reset needed for monitor wrapper
         self.env.reset()
 
-        eliminate_actions = []
+        eliminate_actions = [4]
         base_state = self.unwrapped.env.env.callmethod("get_state")
 
         ######################
