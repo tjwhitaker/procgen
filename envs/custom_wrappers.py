@@ -20,31 +20,84 @@ from ray.tune import registry
 class ReduceActions(gym.Wrapper):
     def __init__(self, env):
         super(ReduceActions, self).__init__(env)
-        self.action_space = self.test_action_space()
+        self.action_map = []
+        self.test_action_space()
 
+    def step(self, action):
+        return self.env.step(self.action_map[action])
+
+    # Environment Independent Action Reduction
     def test_action_space(self):
-        truth = []
-        base_state = self.env.env.env.callmethod("get_state")
+        eliminate_actions = []
 
+        base_state = self.unwrapped.env.env.callmethod("get_state")
+
+        ######################
         # Test Special Actions
-        for _ in range(5):
+        ######################
+        for _ in range(10):
             a, _, _, _ = self.env.step(4)
 
-        self.env.env.env.callmethod("set_state", base_state)
+        self.unwrapped.env.env.callmethod("set_state", base_state)
 
         for action in [9, 10, 11, 12, 13, 14]:
-            for _ in range(5):
+            for _ in range(10):
                 b, _, _, _ = self.env.step(action)
-            test_state = a == b
-            truth.append(test_state.all())
-            self.env.env.env.callmethod("set_state", base_state)
 
+            state_check = a == b
+            if state_check.all():
+                eliminate_actions.append(action)
+
+            self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        ######################################
+        # Test Diagonal == Horizontal Movement
+        ######################################
+        for _ in range(5):
+            la, _, _, _ = self.env.step(1)
+        self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        for _ in range(5):
+            lb, _, _, _ = self.env.step(0)
+        self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        for _ in range(5):
+            lc, _, _, _ = self.env.step(2)
+        self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        for _ in range(5):
+            ra, _, _, _ = self.env.step(7)
+        self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        for _ in range(5):
+            rb, _, _, _ = self.env.step(6)
+        self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        for _ in range(5):
+            rc, _, _, _ = self.env.step(8)
+        self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        # State Comparisons
+        lld = la == lb
+        llu = la == lc
+        rrd = ra == rb
+        rru = ra == rc
+
+        # Enforce symmetry if we remove diagonals
+        if lld.all() and llu.all() and rrd.all() and rru.all():
+            eliminate_actions.append(0)
+            eliminate_actions.append(2)
+            eliminate_actions.append(6)
+            eliminate_actions.append(8)
+
+        # Build our action map
+        actions = set([*range(15)])
+        eliminations = set(eliminate_actions)
+        self.action_map = list(actions - eliminations)
+        self.action_space = gym.spaces.Discrete(len(self.action_map))
+
+        # Force reset the env to start training
         self.env.step(-1)
-
-        if all(truth):
-            return gym.spaces.Discrete(9)
-        else:
-            return gym.spaces.Discrete(15)
 
 
 class ContinuousLife(gym.Wrapper):
