@@ -10,7 +10,7 @@ procgen-pe:
 
     config:
         env_config:
-            env_name: bigfish
+            env_name: miner
             num_levels: 0
             start_level: 0
             paint_vel_info: False

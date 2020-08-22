@@ -28,8 +28,10 @@ class ReduceActions(gym.Wrapper):
 
     # Environment Independent Action Reduction
     def test_action_space(self):
-        eliminate_actions = []
+        # Initial reset needed for monitor wrapper
+        self.env.reset()
 
+        eliminate_actions = []
         base_state = self.unwrapped.env.env.callmethod("get_state")
 
         ######################
