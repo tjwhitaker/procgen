@@ -22,13 +22,10 @@ class ReduceActions(gym.Wrapper):
         super(ReduceActions, self).__init__(env)
         self.action_map = []
         self.test_action_space()
-        print(type(self.unwrapped.env.env))
+        print(self.action_space)
 
     def step(self, action):
-        if len(self.action_map) == self.action_space.n:
-            return self.env.step(self.action_map[action])
-        else:
-            return self.env.step(action)
+        return self.env.step(self.action_map[action])
 
     # Environment Independent Action Reduction
     def test_action_space(self):
@@ -41,17 +38,25 @@ class ReduceActions(gym.Wrapper):
         ######################
         # Test Special Actions
         ######################
+        astates = []
         for _ in range(10):
             a, _, _, _ = self.env.step(4)
+            astates.append(a)
 
         self.unwrapped.env.env.callmethod("set_state", base_state)
 
         for action in [9, 10, 11, 12, 13, 14]:
+            bstates = []
             for _ in range(10):
                 b, _, _, _ = self.env.step(action)
+                bstates.append(b)
 
-            state_check = a == b
-            if state_check.all():
+            state_checks = []
+            for i in range(10):
+                eql = astates[i] == bstates[i]
+                state_checks.append(eql.all())
+
+            if all(state_checks):
                 eliminate_actions.append(action)
 
             self.unwrapped.env.env.callmethod("set_state", base_state)
