@@ -22,9 +22,13 @@ class ReduceActions(gym.Wrapper):
         super(ReduceActions, self).__init__(env)
         self.action_map = []
         self.test_action_space()
+        print(type(self.unwrapped.env.env))
 
     def step(self, action):
-        return self.env.step(self.action_map[action])
+        if len(self.action_map) == self.action_space.n:
+            return self.env.step(self.action_map[action])
+        else:
+            return self.env.step(action)
 
     # Environment Independent Action Reduction
     def test_action_space(self):
