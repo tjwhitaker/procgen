@@ -176,9 +176,9 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = ContinuousLife(env, rollout)
+    # env = ContinuousLife(env, rollout)
     env = FrameStack(env, 4)
-    # env = FrameSkip(env, 1)
+    env = FrameSkip(env, 1)
     return env
 
 
