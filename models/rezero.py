@@ -63,8 +63,8 @@ class ReZeroCNN(TorchModelV2, nn.Module):
             conv_seq = ConvSequence(shape, out_channels)
             shape = conv_seq.get_output_shape()
             conv_seqs.append(conv_seq)
-        # conv_seqs.append(ResidualBlock(64))
-        # conv_seqs.append(ResidualBlock(64))
+        conv_seqs.append(ResidualBlock(64))
+        conv_seqs.append(ResidualBlock(64))
         self.conv_seqs = nn.ModuleList(conv_seqs)
         self.hidden_fc = nn.Linear(
             in_features=4096, out_features=256)
