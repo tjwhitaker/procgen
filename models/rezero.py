@@ -11,16 +11,24 @@ class ResidualBlock(nn.Module):
         super().__init__()
         self.conv0 = nn.Conv2d(in_channels=channels,
                                out_channels=channels, kernel_size=3, padding=1)
+        self.dropout0 = nn.Dropout(0.1)
+        self.bn0 = nn.BatchNorm2d(channels)
         self.conv1 = nn.Conv2d(in_channels=channels,
                                out_channels=channels, kernel_size=3, padding=1)
+        self.dropout1 = nn.Dropout(0.1)
+        self.bn1 = nn.BatchNorm2d(channels)
         self.alpha = nn.Parameter(torch.zeros(1))
 
     def forward(self, x):
         inputs = x
         x = nn.functional.relu(x)
         x = self.conv0(x)
+        x = self.dropout0(x)
+        x = self.bn0(x)
         x = nn.functional.relu(x)
         x = self.conv1(x)
+        x = self.dropout1(x)
+        x = self.bn1(x)
         x = self.alpha * x
         return x + inputs
 
@@ -32,11 +40,15 @@ class ConvSequence(nn.Module):
         self._out_channels = out_channels
         self.conv = nn.Conv2d(
             in_channels=self._input_shape[0], out_channels=self._out_channels, kernel_size=3, padding=1)
+        self.dropout = nn.Dropout(0.1)
+        self.bn = nn.BatchNorm2d(self._out_channels)
         self.res_block0 = ResidualBlock(self._out_channels)
         self.res_block1 = ResidualBlock(self._out_channels)
 
     def forward(self, x):
         x = self.conv(x)
+        x = self.dropout(x)
+        x = self.bn(x)
         x = nn.functional.max_pool2d(x, kernel_size=3, stride=2, padding=1)
         x = self.res_block0(x)
         x = self.res_block1(x)
