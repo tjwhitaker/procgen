@@ -7,16 +7,6 @@ from collections import deque
 from ray.tune import registry
 
 
-# class DeliberatePractice(gym.Wrapper):
-#     def __init__(self, env):
-#         super(DeliberatePractice, self).__init__(env)
-#         self.env_state = []
-
-#     def reset(self):
-#         self.env_state = self.env.env.env.callmethod("get_state")
-#         print(states)
-
-
 class ReduceActions(gym.Wrapper):
     def __init__(self, env):
         super(ReduceActions, self).__init__(env)
