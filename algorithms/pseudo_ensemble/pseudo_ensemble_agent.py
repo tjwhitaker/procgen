@@ -102,9 +102,10 @@ class PseudoEnsembleAgent(PseudoEnsembleTrainer):
 
     def create_ensemble(self):
         self.ensemble_weights = []
+        alpha = 0.05
 
-        for _ in range(8):
+        for _ in range(4):
             w = deepcopy(self.original_weights)
-            new_weights = prune_weights(w, 0.05)
-            # new_weights = add_gaussian_noise(w, 0.1)
+            new_weights = prune_weights(w, alpha)
+            # new_weights = add_gaussian_noise(w, alpha)
             self.ensemble_weights.append(new_weights)
