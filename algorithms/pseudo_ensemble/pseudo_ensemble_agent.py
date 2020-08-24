@@ -28,12 +28,10 @@ def add_gaussian_noise(weights, scale):
 def calculate_entropy(values):
     x = values - max(values)
     softmax = np.exp(x) / np.sum(np.exp(x))
-
     entropy = 0
+
     for p in softmax:
         entropy -= p * math.log(p, len(softmax))
-
-    print(entropy)
 
     return entropy
 
