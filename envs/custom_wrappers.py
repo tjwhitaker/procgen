@@ -167,7 +167,7 @@ def create_env(config):
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
     # env = ContinuousLife(env, rollout)
-    env = FrameStack(env, 4)
+    # env = FrameStack(env, 4)
     # env = FrameSkip(env, 1)
     return env
 

@@ -73,7 +73,7 @@ class PseudoEnsembleAgent(PseudoEnsembleTrainer):
             timestep=self.global_vars["timestep"])
 
         # If entropy is high, run through ensemble
-        if calculate_entropy(info['action_dist_inputs']) > 0.975:
+        if calculate_entropy(info['action_dist_inputs']) > 0.98:
             ensemble_actions = []
 
             for weights in self.ensemble_weights:
