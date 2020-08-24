@@ -33,6 +33,8 @@ def calculate_entropy(values):
     for p in softmax:
         entropy -= p * math.log(p, len(softmax))
 
+    print(entropy)
+
     return entropy
 
 
@@ -73,7 +75,7 @@ class PseudoEnsembleAgent(PseudoEnsembleTrainer):
             timestep=self.global_vars["timestep"])
 
         # If entropy is high, run through ensemble
-        if calculate_entropy(info['action_dist_inputs']) > 0.95:
+        if calculate_entropy(info['action_dist_inputs']) > 0.975:
             ensemble_actions = []
 
             for weights in self.ensemble_weights:
