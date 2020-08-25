@@ -151,7 +151,7 @@ class FrameSkip(gym.Wrapper):
         total_reward = 0
 
         # Frameskip proportional to action space complexity
-        if self.action_space.n > 5:
+        if self.action_space.n > 8:
             for _ in range(self.n):
                 state, reward, done, info = self.env.step(action)
                 total_reward += reward
@@ -197,7 +197,7 @@ def create_env(config):
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
     env = ContinuousLife(env, rollout)
-    # env = FrameSkip(env, 2)
+    env = FrameSkip(env, 2)
     env = FrameStack(env, 4)
     return env
 
