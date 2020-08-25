@@ -124,11 +124,15 @@ class FrameSkip(gym.Wrapper):
     def step(self, action):
         total_reward = 0
 
-        for _ in range(self.n):
-            state, reward, done, info = self.env.step(action)
-            total_reward += reward
-            if done:
-                break
+        # Frameskip proportional to action space complexity
+        if self.action_space.n > 5:
+            for _ in range(self.n):
+                state, reward, done, info = self.env.step(action)
+                total_reward += reward
+                if done:
+                    break
+        else:
+            state, total_reward, done, info = self.env.step(action)
 
         return state, total_reward, done, info
 
