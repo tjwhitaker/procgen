@@ -168,7 +168,7 @@ def create_env(config):
     env = ReduceActions(env)
     # env = ContinuousLife(env, rollout)
     env = FrameSkip(env, 2)
-    env = FrameStack(env, 4)
+    env = FrameStack(env, 3)
     return env
 
 
