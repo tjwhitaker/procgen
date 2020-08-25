@@ -21,7 +21,7 @@ class ReduceActions(gym.Wrapper):
         # Initial reset needed for monitor wrapper
         self.env.reset()
 
-        eliminate_actions = []
+        eliminate_actions = [4]
         base_state = self.unwrapped.env.env.callmethod("get_state")
 
         ######################
@@ -116,34 +116,6 @@ class ContinuousLife(gym.Wrapper):
         return state, reward, done, info
 
 
-class FrameStack(gym.Wrapper):
-    def __init__(self, env, k):
-        super(FrameStack, self).__init__(env)
-        self.k = k
-        self.frames = deque([], maxlen=k)
-        shp = env.observation_space.shape
-        self.observation_space = gym.spaces.Box(
-            low=0,
-            high=255,
-            shape=(shp[0], shp[1], shp[2] * k),
-            dtype=env.observation_space.dtype)
-
-    def reset(self):
-        ob = self.env.reset()
-        for _ in range(self.k):
-            self.frames.append(ob)
-        return self._get_ob()
-
-    def step(self, action):
-        ob, reward, done, info = self.env.step(action)
-        self.frames.append(ob)
-        return self._get_ob(), reward, done, info
-
-    def _get_ob(self):
-        assert len(self.frames) == self.k
-        return np.concatenate(self.frames, axis=2)
-
-
 class FrameSkip(gym.Wrapper):
     def __init__(self, env, n):
         super(FrameSkip, self).__init__(env)
@@ -161,14 +133,42 @@ class FrameSkip(gym.Wrapper):
         return state, total_reward, done, info
 
 
+class FrameStack(gym.Wrapper):
+    def __init__(self, env, n):
+        super(FrameStack, self).__init__(env)
+        self.n = n
+        self.frames = deque([], maxlen=n)
+        shp = env.observation_space.shape
+        self.observation_space = gym.spaces.Box(
+            low=0,
+            high=255,
+            shape=(shp[0], shp[1], shp[2] * n),
+            dtype=env.observation_space.dtype)
+
+    def reset(self):
+        ob = self.env.reset()
+        for _ in range(self.n):
+            self.frames.append(ob)
+        return self._get_ob()
+
+    def step(self, action):
+        ob, reward, done, info = self.env.step(action)
+        self.frames.append(ob)
+        return self._get_ob(), reward, done, info
+
+    def _get_ob(self):
+        assert len(self.frames) == self.n
+        return np.concatenate(self.frames, axis=2)
+
+
 def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
     # env = ContinuousLife(env, rollout)
+    env = FrameSkip(env, 2)
     env = FrameStack(env, 4)
-    # env = FrameSkip(env, 1)
     return env
 
 
