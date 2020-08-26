@@ -12,6 +12,7 @@ class ReduceActions(gym.Wrapper):
         super(ReduceActions, self).__init__(env)
         self.action_map = []
         self.test_action_space()
+        print(self.action_space)
 
     def step(self, action):
         return self.env.step(self.action_map[action])
@@ -105,6 +106,8 @@ class ContinuousLife(gym.Wrapper):
         super(ContinuousLife, self).__init__(env)
         self.rollout = rollout
         self.episode_reward = 0
+
+        # See https://discourse.aicrowd.com/t/getting-rmax-from-environment/3362
         self.reward_max = {
             'coinrun': 10,
             'starpilot': 64,
@@ -197,7 +200,7 @@ def create_env(config):
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
     env = ContinuousLife(env, rollout)
-    env = FrameSkip(env, 2)
+    # env = FrameSkip(env, 2)
     env = FrameStack(env, 4)
     return env
 
