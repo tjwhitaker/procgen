@@ -11,23 +11,21 @@ class ReduceActions(gym.Wrapper):
     def __init__(self, env):
         super(ReduceActions, self).__init__(env)
         self.action_map = []
-        self.test_action_space()
+        self.reduce_action_space()
         print(self.action_space)
 
     def step(self, action):
         return self.env.step(self.action_map[action])
 
     # Environment Independent Action Reduction
-    def test_action_space(self):
+    def reduce_action_space(self):
         # Initial reset needed for monitor wrapper
         self.env.reset()
 
         eliminate_actions = []
         base_state = self.unwrapped.env.env.callmethod("get_state")
 
-        ######################
         # Test Special Actions
-        ######################
         astates = []
         for _ in range(10):
             a, _, _, _ = self.env.step(4)
@@ -51,9 +49,7 @@ class ReduceActions(gym.Wrapper):
 
             self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        ######################################
         # Test Diagonal == Horizontal Movement
-        ######################################
         for _ in range(5):
             la, _, _, _ = self.env.step(1)
         self.unwrapped.env.env.callmethod("set_state", base_state)
@@ -138,6 +134,9 @@ class ContinuousLife(gym.Wrapper):
         self.episode_reward += reward
 
         if not self.rollout:
+            # Need to know max reward to know if we've completed level
+            # Previous solution used done && current step reward > 0
+            # Errors when you get a reward and die in the same frame (bigfish)
             if done and (self.episode_reward >= self.reward_max[self.env.env_name]):
                 self.reset()
                 done = False
@@ -199,7 +198,7 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = ContinuousLife(env, rollout)
+    # env = ContinuousLife(env, rollout)
     # env = FrameSkip(env, 2)
     env = FrameStack(env, 3)
     return env
