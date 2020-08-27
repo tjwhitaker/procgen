@@ -100,28 +100,28 @@ class FrameStack(gym.Wrapper):
     def __init__(self, env, n):
         super(FrameStack, self).__init__(env)
         self.n = n
-        self.frames = deque([], maxlen=n)
+        self.buffer = deque([], maxlen=n)
         shp = env.observation_space.shape
         self.observation_space = gym.spaces.Box(
             low=0,
             high=255,
-            shape=(shp[0], shp[1], shp[2] * n),
+            shape=(shp[0], shp[1], shp[2] * 3),
             dtype=env.observation_space.dtype)
 
     def reset(self):
         ob = self.env.reset()
         for _ in range(self.n):
-            self.frames.append(ob)
+            self.buffer.append(ob)
         return self._get_ob()
 
     def step(self, action):
         ob, reward, done, info = self.env.step(action)
-        self.frames.append(ob)
+        self.buffer.append(ob)
         return self._get_ob(), reward, done, info
 
     def _get_ob(self):
-        assert len(self.frames) == self.n
-        return np.concatenate(self.frames, axis=2)
+        frames = [self.buffer[-1], self.buffer[-3], self.buffer[-5]]
+        return np.concatenate(frames, axis=2)
 
 
 def create_env(config):
@@ -129,7 +129,7 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = FrameStack(env, 3)
+    env = FrameStack(env, 6)
     return env
 
 
