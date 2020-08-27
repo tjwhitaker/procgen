@@ -21,7 +21,7 @@ class ReduceActions(gym.Wrapper):
         # Initial reset needed for monitor wrapper
         self.env.reset()
 
-        eliminate_actions = [4]
+        eliminate_actions = []
         base_state = self.unwrapped.env.env.callmethod("get_state")
 
         # Test Special Actions
@@ -96,74 +96,6 @@ class ReduceActions(gym.Wrapper):
         self.env.step(-1)
 
 
-# class ContinuousLife(gym.Wrapper):
-#     def __init__(self, env, rollout):
-#         super(ContinuousLife, self).__init__(env)
-#         self.rollout = rollout
-#         self.episode_reward = 0
-
-#         # See https://discourse.aicrowd.com/t/getting-rmax-from-environment/3362
-#         self.reward_max = {
-#             'coinrun': 10,
-#             'starpilot': 64,
-#             'caveflyer': 12,
-#             'dodgeball': 19,
-#             'fruitbot': 32.4,
-#             'chaser': 13,
-#             'miner': 13,
-#             'jumper': 10,
-#             'leaper': 10,
-#             'maze': 10,
-#             'bigfish': 40,
-#             'heist': 10,
-#             'climber': 12.6,
-#             'plunder': 30,
-#             'ninja': 10,
-#             'bossfight': 13,
-#             'caterpillar': 24,
-#         }
-
-#     def reset(self):
-#         self.episode_reward = 0
-#         return self.env.reset()
-
-#     def step(self, action):
-#         state, reward, done, info = self.env.step(action)
-
-#         self.episode_reward += reward
-
-#         if not self.rollout:
-#             # Need to know max reward to know if we've completed level
-#             # Previous solution used done && current step reward > 0
-#             # Errors when you get a reward and die in the same frame (bigfish)
-#             if done and (self.episode_reward >= self.reward_max[self.env.env_name]):
-#                 self.reset()
-#                 done = False
-
-#         return state, reward, done, info
-
-
-class FrameSkip(gym.Wrapper):
-    def __init__(self, env, n):
-        super(FrameSkip, self).__init__(env)
-        self.n = n
-
-    def step(self, action):
-        total_reward = 0
-
-        # Frameskip proportional to action space complexity
-        if self.action_space.n > 8:
-            for _ in range(self.n):
-                state, reward, done, info = self.env.step(action)
-                total_reward += reward
-                if done:
-                    break
-        else:
-            state, total_reward, done, info = self.env.step(action)
-
-        return state, total_reward, done, info
-
-
 class FrameStack(gym.Wrapper):
     def __init__(self, env, n):
         super(FrameStack, self).__init__(env)
@@ -197,8 +129,6 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    # env = ContinuousLife(env, rollout)
-    # env = FrameSkip(env, 2)
     env = FrameStack(env, 3)
     return env
 
