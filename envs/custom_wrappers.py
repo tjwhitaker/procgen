@@ -109,7 +109,7 @@ class TimeLimit(gym.Wrapper):
     def step(self, action):
         self.steps += 1
 
-        if (not self.rollout) and (self.steps > 1000):
+        if (not self.rollout) and (self.steps > 750):
             self.steps = 0
             return self.env.step(-1)
         else:
