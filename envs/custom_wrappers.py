@@ -96,6 +96,54 @@ class ReduceActions(gym.Wrapper):
         self.env.step(-1)
 
 
+class DeliberatePractice(gym.Wrapper):
+    def __init__(self, env, rollout):
+        super(DeliberatePractice, self).__init__(env)
+        self.rollout = rollout
+        self.base_state = []
+        self.base_obs = []
+        self.episode_reward = 0
+
+        # See https://discourse.aicrowd.com/t/getting-rmax-from-environment/3362
+        self.reward_max = {
+            'coinrun': 10,
+            'starpilot': 64,
+            'caveflyer': 12,
+            'dodgeball': 19,
+            'fruitbot': 32.4,
+            'chaser': 13,
+            'miner': 13,
+            'jumper': 10,
+            'leaper': 10,
+            'maze': 10,
+            'bigfish': 40,
+            'heist': 10,
+            'climber': 12.6,
+            'plunder': 30,
+            'ninja': 10,
+            'bossfight': 13,
+            'caterpillar': 24,
+        }
+
+    def reset(self):
+        self.episode_reward = 0
+        self.base_obs = self.env.reset()
+        self.base_state = self.unwrapped.env.env.callmethod("get_state")
+        return self.base_obs
+
+    def step(self, action):
+        state, reward, done, info = self.env.step(action)
+
+        self.episode_reward += reward
+
+        if not self.rollout:
+            if done and (self.episode_reward < self.reward_max[self.env.env_name]):
+                self.unwrapped.env.env.callmethod("set_state", self.base_state)
+                return self.base_obs, 0, False, info
+
+        return state, reward, done, info
+
+
 class TimeLimit(gym.Wrapper):
     def __init__(self, env, rollout):
         super(TimeLimit, self).__init__(env)
@@ -116,61 +164,61 @@ class TimeLimit(gym.Wrapper):
             return self.env.step(action)
 
 
-class FrameStack(gym.Wrapper):
-    def __init__(self, env, n):
-        super(FrameStack, self).__init__(env)
-        self.n = n
-        self.frames = deque([], maxlen=n)
-        shp = env.observation_space.shape
-        self.observation_space = gym.spaces.Box(
-            low=0,
-            high=255,
-            shape=(shp[0], shp[1], shp[2] * n),
-            dtype=env.observation_space.dtype)
-
-    def reset(self):
-        ob = self.env.reset()
-        for _ in range(self.n):
-            self.frames.append(ob)
-        return self._get_ob()
-
-    def step(self, action):
-        ob, reward, done, info = self.env.step(action)
-        self.frames.append(ob)
-        return self._get_ob(), reward, done, info
-
-    def _get_ob(self):
-        assert len(self.frames) == self.n
-        return np.concatenate(self.frames, axis=2)
-
-
 # class FrameStack(gym.Wrapper):
 #     def __init__(self, env, n):
 #         super(FrameStack, self).__init__(env)
 #         self.n = n
-#         self.buffer = deque([], maxlen=n)
+#         self.frames = deque([], maxlen=n)
 #         shp = env.observation_space.shape
 #         self.observation_space = gym.spaces.Box(
 #             low=0,
 #             high=255,
-#             shape=(shp[0], shp[1], shp[2] * 3),
+#             shape=(shp[0], shp[1], shp[2] * n),
 #             dtype=env.observation_space.dtype)
 
 #     def reset(self):
 #         ob = self.env.reset()
 #         for _ in range(self.n):
-#             self.buffer.append(ob)
+#             self.frames.append(ob)
 #         return self._get_ob()
 
 #     def step(self, action):
 #         ob, reward, done, info = self.env.step(action)
-#         self.buffer.append(ob)
+#         self.frames.append(ob)
 #         return self._get_ob(), reward, done, info
 
 #     def _get_ob(self):
-#         # Stack last n frames skip 1
-#         frames = [self.buffer[-1], self.buffer[-3], self.buffer[-5]]
-#         return np.concatenate(frames, axis=2)
+#         assert len(self.frames) == self.n
+#         return np.concatenate(self.frames, axis=2)
+
+
+class FrameStack(gym.Wrapper):
+    def __init__(self, env, n):
+        super(FrameStack, self).__init__(env)
+        self.n = n
+        self.buffer = deque([], maxlen=n)
+        shp = env.observation_space.shape
+        self.observation_space = gym.spaces.Box(
+            low=0,
+            high=255,
+            shape=(shp[0], shp[1], shp[2] * 3),
+            dtype=env.observation_space.dtype)
+
+    def reset(self):
+        ob = self.env.reset()
+        for _ in range(self.n):
+            self.buffer.append(ob)
+        return self._get_ob()
+
+    def step(self, action):
+        ob, reward, done, info = self.env.step(action)
+        self.buffer.append(ob)
+        return self._get_ob(), reward, done, info
+
+    def _get_ob(self):
+        # Stack last n frames skip 1
+        frames = [self.buffer[-1], self.buffer[-3], self.buffer[-5]]
+        return np.concatenate(frames, axis=2)
 
 
 def create_env(config):
@@ -178,9 +226,10 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = TimeLimit(env, rollout)
-    # env = FrameStack(env, 6)
-    env = FrameStack(env, 3)
+    # env = DeliberatePractice(env, rollout)
+    # env = TimeLimit(env, rollout)
+    env = FrameStack(env, 6)
+    # env = FrameStack(env, 3)
     return env
 
 
