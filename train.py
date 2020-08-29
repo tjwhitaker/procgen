@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from algorithms import CUSTOM_ALGORITHMS
 import argparse
 import os
 from pathlib import Path
@@ -37,13 +38,13 @@ Note that -f overrides all other trial-specific command-line options.
 """
 
 # Register all necessary assets in tune registries
-load_envs(os.getcwd()) # Load envs
-load_models(os.getcwd()) # Load models
+load_envs(os.getcwd())  # Load envs
+load_models(os.getcwd())  # Load models
 # Load custom algorithms
-from algorithms import CUSTOM_ALGORITHMS
 load_algorithms(CUSTOM_ALGORITHMS)
 
 print(ray.rllib.contrib.registry.CONTRIBUTED_ALGORITHMS)
+
 
 def create_parser(parser_creator=None):
     parser = make_parser(
@@ -199,8 +200,9 @@ def run(args, parser):
                 raise ValueError("Must enable --eager to enable tracing.")
             exp["config"]["eager_tracing"] = True
 
-        ### Add Custom Callbacks
+        # Add Custom Callbacks
         exp["config"]["callbacks"] = CustomCallbacks
+        exp.pop("disable_evaluation_worker")
 
     if args.ray_num_nodes:
         cluster = Cluster()

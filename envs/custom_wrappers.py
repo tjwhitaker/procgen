@@ -26,7 +26,7 @@ class ReduceActions(gym.Wrapper):
 
         # Test Special Actions
         astates = []
-        for _ in range(10):
+        for _ in range(8):
             a, _, _, _ = self.env.step(4)
             astates.append(a)
 
@@ -34,12 +34,12 @@ class ReduceActions(gym.Wrapper):
 
         for action in [9, 10, 11, 12, 13, 14]:
             bstates = []
-            for _ in range(10):
+            for _ in range(8):
                 b, _, _, _ = self.env.step(action)
                 bstates.append(b)
 
             state_checks = []
-            for i in range(10):
+            for i in range(8):
                 eql = astates[i] == bstates[i]
                 state_checks.append(eql.all())
 
@@ -49,27 +49,27 @@ class ReduceActions(gym.Wrapper):
             self.unwrapped.env.env.callmethod("set_state", base_state)
 
         # Test Diagonal == Horizontal Movement
-        for _ in range(5):
+        for _ in range(4):
             la, _, _, _ = self.env.step(1)
         self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
+        for _ in range(4):
             lb, _, _, _ = self.env.step(0)
         self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
+        for _ in range(4):
             lc, _, _, _ = self.env.step(2)
         self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
+        for _ in range(4):
             ra, _, _, _ = self.env.step(7)
         self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
+        for _ in range(4):
             rb, _, _, _ = self.env.step(6)
         self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
+        for _ in range(4):
             rc, _, _, _ = self.env.step(8)
         self.unwrapped.env.env.callmethod("set_state", base_state)
 
@@ -130,6 +130,7 @@ class ContinuousLife(gym.Wrapper):
 
         if not self.rollout:
             if done and (self.episode_reward >= self.reward_max[self.env.env_name]):
+                self.env.reset()
                 self.episode_reward = 0
                 done = False
 

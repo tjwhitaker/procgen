@@ -1,6 +1,7 @@
 procgen-pe:
     env: custom_wrapper
     run: PseudoEnsemble
+    disable_evaluation_worker: True
     stop:
         timesteps_total: 8000000
 
@@ -55,14 +56,14 @@ procgen-pe:
             custom_options: {}
 
         num_workers: 4
-        num_envs_per_worker: 20
+        num_envs_per_worker: 16
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
 
         num_cpus_per_worker: 1
         num_gpus_per_worker: 0.1
         num_cpus_for_driver: 1
-        num_gpus: 0.5
+        num_gpus: 0.6
 
         observation_filter: "NoFilter"
         synchronize_filters: True
