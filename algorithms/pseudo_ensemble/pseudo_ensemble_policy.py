@@ -2,6 +2,8 @@ import numpy as np
 from ray.rllib.evaluation.postprocessing import compute_advantages, Postprocessing
 from ray.rllib.policy.sample_batch import SampleBatch
 from ray.rllib.agents.ppo.ppo_torch_policy import PPOTorchPolicy
+from ray.rllib.policy.torch_policy import LearningRateSchedule, EntropyCoeffSchedule
+from ray.rllib.agents.ppo.ppo_torch_policy import KLCoeffMixin, ValueNetworkMixin
 
 
 def my_postprocess_ppo_gae(policy,
@@ -71,4 +73,6 @@ def my_postprocess_ppo_gae(policy,
 
 PseudoEnsemblePolicy = PPOTorchPolicy.with_updates(
     postprocess_fn=my_postprocess_ppo_gae,
+    mixins=[LearningRateSchedule, EntropyCoeffSchedule,
+            KLCoeffMixin, ValueNetworkMixin]
 )

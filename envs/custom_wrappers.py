@@ -129,9 +129,6 @@ class ContinuousLife(gym.Wrapper):
         self.episode_reward += reward
 
         if not self.rollout:
-            # Need to know max reward to know if we've completed level
-            # Previous solution used done && current step reward > 0
-            # Errors when you get a reward and die in the same frame (bigfish)
             if done and (self.episode_reward >= self.reward_max[self.env.env_name]):
                 self.episode_reward = 0
                 done = False
@@ -139,52 +136,52 @@ class ContinuousLife(gym.Wrapper):
         return state, reward, done, info
 
 
-class DeliberatePractice(gym.Wrapper):
-    def __init__(self, env, rollout):
-        super(DeliberatePractice, self).__init__(env)
-        self.rollout = rollout
-        self.base_state = []
-        self.base_obs = []
-        self.episode_reward = 0
+# class DeliberatePractice(gym.Wrapper):
+#     def __init__(self, env, rollout):
+#         super(DeliberatePractice, self).__init__(env)
+#         self.rollout = rollout
+#         self.base_state = []
+#         self.base_obs = []
+#         self.episode_reward = 0
 
-        # See https://discourse.aicrowd.com/t/getting-rmax-from-environment/3362
-        self.reward_max = {
-            'coinrun': 10,
-            'starpilot': 64,
-            'caveflyer': 12,
-            'dodgeball': 19,
-            'fruitbot': 32.4,
-            'chaser': 13,
-            'miner': 13,
-            'jumper': 10,
-            'leaper': 10,
-            'maze': 10,
-            'bigfish': 40,
-            'heist': 10,
-            'climber': 12.6,
-            'plunder': 30,
-            'ninja': 10,
-            'bossfight': 13,
-            'caterpillar': 24,
-        }
+#         # See https://discourse.aicrowd.com/t/getting-rmax-from-environment/3362
+#         self.reward_max = {
+#             'coinrun': 10,
+#             'starpilot': 64,
+#             'caveflyer': 12,
+#             'dodgeball': 19,
+#             'fruitbot': 32.4,
+#             'chaser': 13,
+#             'miner': 13,
+#             'jumper': 10,
+#             'leaper': 10,
+#             'maze': 10,
+#             'bigfish': 40,
+#             'heist': 10,
+#             'climber': 12.6,
+#             'plunder': 30,
+#             'ninja': 10,
+#             'bossfight': 13,
+#             'caterpillar': 24,
+#         }
 
-    def reset(self):
-        self.episode_reward = 0
-        self.base_obs = self.env.reset()
-        self.base_state = self.unwrapped.env.env.callmethod("get_state")
-        return self.base_obs
+#     def reset(self):
+#         self.episode_reward = 0
+#         self.base_obs = self.env.reset()
+#         self.base_state = self.unwrapped.env.env.callmethod("get_state")
+#         return self.base_obs
 
-    def step(self, action):
-        state, reward, done, info = self.env.step(action)
+#     def step(self, action):
+#         state, reward, done, info = self.env.step(action)
 
-        self.episode_reward += reward
+#         self.episode_reward += reward
 
-        if not self.rollout:
-            if done and (self.episode_reward < self.reward_max[self.env.env_name]):
-                self.unwrapped.env.env.callmethod("set_state", self.base_state)
-                return self.base_obs, reward, False, info
+#         if not self.rollout:
+#             if done and (self.episode_reward < self.reward_max[self.env.env_name]):
+#                 self.unwrapped.env.env.callmethod("set_state", self.base_state)
+#                 return self.base_obs, reward, False, info
 
-        return state, reward, done, info
+#         return state, reward, done, info
 
 
 class TimeLimit(gym.Wrapper):
@@ -236,7 +233,7 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    # env = ContinuousLife(env, rollout)
+    env = ContinuousLife(env, rollout)
     # env = DeliberatePractice(env, rollout)
     # env = TimeLimit(env, rollout)
     env = FrameStack(env, 3)
