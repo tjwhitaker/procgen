@@ -74,7 +74,7 @@ class PseudoEnsembleAgent(PseudoEnsembleTrainer):
 
         # If entropy is high, run through ensemble
         if calculate_entropy(info['action_dist_inputs']) > 0.975:
-            ensemble_actions = []
+            ensemble_actions = [action]
 
             for weights in self.ensemble_weights:
                 self.get_policy().set_weights(weights)

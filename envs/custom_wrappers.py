@@ -239,7 +239,7 @@ def create_env(config):
     # env = ContinuousLife(env, rollout)
     # env = DeliberatePractice(env, rollout)
     # env = TimeLimit(env, rollout)
-    env = FrameStack(env, 4)
+    env = FrameStack(env, 3)
     return env
 
 
