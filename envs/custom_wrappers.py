@@ -234,7 +234,7 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = ContinuousLife(env, rollout)
+    # env = ContinuousLife(env, rollout)
     # env = DeliberatePractice(env, rollout)
     # env = TimeLimit(env, rollout)
     env = FrameStack(env, 3)
