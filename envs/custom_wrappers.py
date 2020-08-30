@@ -133,6 +133,9 @@ class ContinuousLife(gym.Wrapper):
                 self.env.reset()
                 self.episode_reward = 0
                 done = False
+            elif done and (self.episode_reward < self.reward_max[self.env.env_name]):
+                self.episode_reward = 0
+                reward = -1
 
         return state, reward, done, info
 
@@ -234,7 +237,7 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    # env = ContinuousLife(env, rollout)
+    env = ContinuousLife(env, rollout)
     # env = DeliberatePractice(env, rollout)
     # env = TimeLimit(env, rollout)
     env = FrameStack(env, 3)
