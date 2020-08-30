@@ -128,14 +128,11 @@ class ContinuousLife(gym.Wrapper):
 
         self.episode_reward += reward
 
-        if not self.rollout:
-            if done and (self.episode_reward >= self.reward_max[self.env.env_name]):
+        if not self.rollout and done:
+            self.episode_reward = 0
+            if self.episode_reward >= self.reward_max[self.env.env_name]:
                 self.env.reset()
-                self.episode_reward = 0
                 done = False
-            elif done and (self.episode_reward < self.reward_max[self.env.env_name]):
-                self.episode_reward = 0
-                reward = -1
 
         return state, reward, done, info
 
@@ -188,20 +185,20 @@ class ContinuousLife(gym.Wrapper):
 #         return state, reward, done, info
 
 
-class TimeLimit(gym.Wrapper):
-    def __init__(self, env, rollout):
-        super(TimeLimit, self).__init__(env)
-        self.steps = 0
-        self.rollout = rollout
+# class TimeLimit(gym.Wrapper):
+#     def __init__(self, env, rollout):
+#         super(TimeLimit, self).__init__(env)
+#         self.steps = 0
+#         self.rollout = rollout
 
-    def step(self, action):
-        self.steps += 1
+#     def step(self, action):
+#         self.steps += 1
 
-        if (not self.rollout) and (self.steps > 1000):
-            self.steps = 0
-            return self.env.step(-1)
-        else:
-            return self.env.step(action)
+#         if (not self.rollout) and (self.steps > 1000):
+#             self.steps = 0
+#             return self.env.step(-1)
+#         else:
+#             return self.env.step(action)
 
 
 class FrameStack(gym.Wrapper):
