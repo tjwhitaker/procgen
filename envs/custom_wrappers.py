@@ -129,10 +129,11 @@ class ContinuousLife(gym.Wrapper):
         self.episode_reward += reward
 
         if not self.rollout and done:
-            self.episode_reward = 0
             if self.episode_reward >= self.reward_max[self.env.env_name]:
                 self.env.reset()
                 done = False
+
+            self.episode_reward = 0
 
         return state, reward, done, info
 
