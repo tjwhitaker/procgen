@@ -55,8 +55,8 @@ procgen-pe:
             custom_model: fixup
             custom_options: {}
 
-        num_workers: 2
-        num_envs_per_worker: 32
+        num_workers: 4
+        num_envs_per_worker: 16
         rollout_fragment_length: 256
         batch_mode: truncate_episodes
 
