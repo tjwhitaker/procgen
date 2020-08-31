@@ -42,11 +42,11 @@ def my_postprocess_ppo_gae(policy,
     #             (1/total * sample_batch['rewards'][i])
 
     # Clamp Rewards
-    # for i in range(len(sample_batch['rewards'])):
-    #     if sample_batch['rewards'][i] > 1:
-    #         sample_batch['rewards'][i] = 1
-    #     elif sample_batch['rewards'][i] < -1:
-    #         sample_batch['rewards'][i] = -1
+    for i in range(len(sample_batch['rewards'])):
+        if sample_batch['rewards'][i] > 1:
+            sample_batch['rewards'][i] = 1
+        elif sample_batch['rewards'][i] < -1:
+            sample_batch['rewards'][i] = -1
 
     # print(sample_batch['rewards'])
 
