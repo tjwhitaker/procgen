@@ -25,13 +25,13 @@ def my_postprocess_ppo_gae(policy,
     #     sample_batch['rewards'])) / (np.std(sample_batch['rewards']) + 1e-16)
 
     # Normalize
-    # rmin = np.amin(sample_batch['rewards'])
-    # rmax = np.amax(sample_batch['rewards'])
+    rmin = np.amin(sample_batch['rewards'])
+    rmax = np.amax(sample_batch['rewards'])
 
-    # if ((rmax - rmin) != 0) and (rmax >= 1):
-    #     for i in range(len(sample_batch['rewards'])):
-    #         sample_batch['rewards'][i] = (
-    #             sample_batch['rewards'][i] - rmin) / (rmax - rmin)
+    if ((rmax - rmin) != 0) and (rmax >= 1):
+        for i in range(len(sample_batch['rewards'])):
+            sample_batch['rewards'][i] = (
+                sample_batch['rewards'][i] - rmin) / (rmax - rmin)
 
     # Baseline Reduction
     # total = np.sum(sample_batch['rewards'])
