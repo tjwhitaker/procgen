@@ -3,7 +3,7 @@ procgen-pe:
     run: PseudoEnsemble
     disable_evaluation_worker: True
     stop:
-        timesteps_total: 4000000
+        timesteps_total: 8000000
 
     checkpoint_freq: 100
     checkpoint_at_end: True
