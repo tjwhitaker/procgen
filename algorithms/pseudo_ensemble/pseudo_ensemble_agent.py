@@ -69,7 +69,7 @@ class PseudoEnsembleAgent(PseudoEnsembleTrainer):
             prev_reward,
             info,
             clip_actions=self.config["clip_actions"],
-            explore=explore,
+            explore=True,
             timestep=self.global_vars["timestep"])
 
         # If entropy is high, run through ensemble
@@ -85,7 +85,7 @@ class PseudoEnsembleAgent(PseudoEnsembleTrainer):
                     prev_reward,
                     info,
                     clip_actions=self.config["clip_actions"],
-                    explore=explore,
+                    explore=True,
                     timestep=self.global_vars["timestep"])
                 ensemble_actions.append(result[0])
 
