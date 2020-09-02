@@ -48,8 +48,6 @@ def my_postprocess_ppo_gae(policy,
     #     elif sample_batch['rewards'][i] < -1:
     #         sample_batch['rewards'][i] = -1
 
-    # print(sample_batch['rewards'])
-
     if completed:
         last_r = 0.0
     else:
