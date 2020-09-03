@@ -143,7 +143,7 @@ class ContinuousLife(gym.Wrapper):
 
         return state, reward, done, info
 
-
+# If we die, can we reset to a checkpoint and try again?
 # class DeliberatePractice(gym.Wrapper):
 #     def __init__(self, env, rollout):
 #         super(DeliberatePractice, self).__init__(env)
@@ -190,22 +190,6 @@ class ContinuousLife(gym.Wrapper):
 #                 return self.base_obs, reward, False, info
 
 #         return state, reward, done, info
-
-
-# class TimeLimit(gym.Wrapper):
-#     def __init__(self, env, rollout):
-#         super(TimeLimit, self).__init__(env)
-#         self.steps = 0
-#         self.rollout = rollout
-
-#     def step(self, action):
-#         self.steps += 1
-
-#         if (not self.rollout) and (self.steps > 1000):
-#             self.steps = 0
-#             return self.env.step(-1)
-#         else:
-#             return self.env.step(action)
 
 
 class FrameStack(gym.Wrapper):
@@ -261,7 +245,8 @@ class SubFrameStack(gym.Wrapper):
 
     def _get_ob(self):
         assert len(self.frames) == self.n
-        frames = [self.frames[0], abs(self.frames[1] - self.frames[0])]
+        frames = [self.frames[0], abs(
+            self.frames[1] - self.frames[0]), abs(self.frames[2] - self.frames[0])]
         return np.concatenate(frames, axis=2)
 
 
@@ -270,10 +255,9 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = SubFrameStack(env, 2)
-    env = ContinuousLife(env, rollout)
+    env = SubFrameStack(env, 3)
+    # env = ContinuousLife(env, rollout)
     # env = DeliberatePractice(env, rollout)
-    # env = TimeLimit(env, rollout)
     return env
 
 
