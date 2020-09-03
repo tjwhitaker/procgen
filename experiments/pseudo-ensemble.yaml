@@ -54,8 +54,12 @@ procgen-pe:
       custom_model: fixup
       custom_options: {}
 
+    explore: True,
+    exploration_config:
+      type: "StochasticSampling"
+
     num_workers: 4
-    num_envs_per_worker: 16
+    num_envs_per_worker: 32
     rollout_fragment_length: 256
     batch_mode: truncate_episodes
 
