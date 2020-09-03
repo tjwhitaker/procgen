@@ -222,7 +222,7 @@ class SubFrameStack(gym.Wrapper):
 
     def _get_ob(self):
         assert len(self.frames) == self.n
-        frames = [self.frames[0], abs(self.frames[1] - self.frames[0])]
+        frames = [self.frames[1], abs(self.frames[1] - self.frames[0])]
         return np.concatenate(frames, axis=2)
 
 
