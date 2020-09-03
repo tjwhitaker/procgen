@@ -143,53 +143,30 @@ class ContinuousLife(gym.Wrapper):
 
         return state, reward, done, info
 
-# If we die, can we reset to a checkpoint and try again?
-# class DeliberatePractice(gym.Wrapper):
-#     def __init__(self, env, rollout):
-#         super(DeliberatePractice, self).__init__(env)
-#         self.rollout = rollout
-#         self.base_state = []
-#         self.base_obs = []
-#         self.episode_reward = 0
 
-#         # See https://discourse.aicrowd.com/t/getting-rmax-from-environment/3362
-#         self.reward_max = {
-#             'coinrun': 10,
-#             'starpilot': 64,
-#             'caveflyer': 12,
-#             'dodgeball': 19,
-#             'fruitbot': 32.4,
-#             'chaser': 13,
-#             'miner': 13,
-#             'jumper': 10,
-#             'leaper': 10,
-#             'maze': 10,
-#             'bigfish': 40,
-#             'heist': 10,
-#             'climber': 12.6,
-#             'plunder': 30,
-#             'ninja': 10,
-#             'bossfight': 13,
-#             'caterpillar': 24,
-#         }
+class ImproveContrast(gym.Wrapper):
+    def __init__(self, env):
+        super(ImproveContrast, self).__init__(env)
 
-#     def reset(self):
-#         self.episode_reward = 0
-#         self.base_obs = self.env.reset()
-#         self.base_state = self.unwrapped.env.env.callmethod("get_state")
-#         return self.base_obs
+    def reset(self):
+        state = self.env.reset()
+        return self.process_image(state)
 
-#     def step(self, action):
-#         state, reward, done, info = self.env.step(action)
+    def step(self, action):
+        state, reward, done, info = self.env.step(action)
+        return self.process_image(state), reward, done, info
 
-#         self.episode_reward += reward
+    def process_image(self, state):
+        for i in range(state.shape[-1]):
+            ch = state[:, :, i]
+            minval = np.percentile(ch, 2)
+            maxval = np.percentile(ch, 98)
+            pixels = np.clip(ch, minval, maxval)
+            pixels = ((pixels - minval) / (maxval - minval)) * 255.0
 
-#         if not self.rollout:
-#             if done and (self.episode_reward < self.reward_max[self.env.env_name]):
-#                 self.unwrapped.env.env.callmethod("set_state", self.base_state)
-#                 return self.base_obs, reward, False, info
+            state[:, :, i] = pixels
 
-#         return state, reward, done, info
+        return state
 
 
 class FrameStack(gym.Wrapper):
@@ -245,8 +222,7 @@ class SubFrameStack(gym.Wrapper):
 
     def _get_ob(self):
         assert len(self.frames) == self.n
-        frames = [self.frames[0], abs(
-            self.frames[1] - self.frames[0]), abs(self.frames[2] - self.frames[0])]
+        frames = [self.frames[0], abs(self.frames[1] - self.frames[0])]
         return np.concatenate(frames, axis=2)
 
 
@@ -255,9 +231,7 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = SubFrameStack(env, 3)
-    # env = ContinuousLife(env, rollout)
-    # env = DeliberatePractice(env, rollout)
+    env = SubFrameStack(env, 2)
     return env
 
 
