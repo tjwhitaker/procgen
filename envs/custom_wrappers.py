@@ -101,6 +101,7 @@ class ContinuousLife(gym.Wrapper):
         super(ContinuousLife, self).__init__(env)
         self.rollout = rollout
         self.episode_reward = 0
+        self.episode_step = 0
 
         # See https://discourse.aicrowd.com/t/getting-rmax-from-environment/3362
         self.reward_max = {
@@ -127,15 +128,18 @@ class ContinuousLife(gym.Wrapper):
         state, reward, done, info = self.env.step(action)
 
         self.episode_reward += reward
+        self.episode_step += 1
 
         if not self.rollout and done:
             if self.episode_reward >= self.reward_max[self.env.env_name]:
                 self.env.reset()
                 done = False
-            # elif self.episode_reward < self.reward_max[self.env.env_name]:
-            #     reward = -0.25
+            elif self.episode_reward < self.reward_max[self.env.env_name]:
+                if self.episode_step > 350:
+                    reward -= 1
 
             self.episode_reward = 0
+            self.episode_step = 0
 
         return state, reward, done, info
 
