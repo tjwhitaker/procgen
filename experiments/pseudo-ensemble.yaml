@@ -43,7 +43,7 @@ procgen-pe:
     soft_horizon: False
     no_done_at_end: False
     normalize_actions: False
-    clip_rewards: False
+    clip_rewards: True
     clip_actions: True
     preprocessor_pref: deepmind
     ignore_worker_failures: False

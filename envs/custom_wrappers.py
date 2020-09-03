@@ -232,13 +232,42 @@ class FrameStack(gym.Wrapper):
         return np.concatenate(self.frames, axis=2)
 
 
+class SubFrameStack(gym.Wrapper):
+    def __init__(self, env, n):
+        super(SubFrameStack, self).__init__(env)
+        self.n = n
+        self.frames = deque([], maxlen=n)
+        shp = env.observation_space.shape
+        self.observation_space = gym.spaces.Box(
+            low=0,
+            high=255,
+            shape=(shp[0], shp[1], shp[2] * n),
+            dtype=env.observation_space.dtype)
+
+    def reset(self):
+        ob = self.env.reset()
+        for _ in range(self.n):
+            self.frames.append(ob)
+        return self._get_ob()
+
+    def step(self, action):
+        ob, reward, done, info = self.env.step(action)
+        self.frames.append(ob)
+        return self._get_ob(), reward, done, info
+
+    def _get_ob(self):
+        assert len(self.frames) == self.n
+        frames = [self.frames[0], abs(self.frames[1] - self.frames[0])]
+        return np.concatenate(frames, axis=2)
+
+
 def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = FrameStack(env, 3)
-    env = ContinuousLife(env, rollout)
+    env = SubFrameStack(env, 2)
+    # env = ContinuousLife(env, rollout)
     # env = DeliberatePractice(env, rollout)
     # env = TimeLimit(env, rollout)
     return env
