@@ -263,7 +263,7 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = RetryFailures(env, rollout)
+    # env = RetryFailures(env, rollout)
     env = SubFrameStack(env, 2)
     return env
 
