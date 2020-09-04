@@ -257,7 +257,7 @@ def create_env(config):
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
     env = DiffFrameStack(env, 2)
-    env = ContinuousLife(env, rollout)
+    # env = ContinuousLife(env, rollout)
     # env = ReloadLevels(env, rollout)
     return env
 
