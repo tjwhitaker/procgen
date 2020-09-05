@@ -247,7 +247,8 @@ class DiffFrameStack(gym.Wrapper):
 
     def _get_ob(self):
         assert len(self.frames) == self.n
-        frames = [self.frames[1], abs(self.frames[1] - self.frames[0])]
+        frames = [self.frames[2], abs(
+            self.frames[2] - self.frames[1]), abs(self.frames[2] - self.frames[0])]
         return np.concatenate(frames, axis=2)
 
 
@@ -256,8 +257,8 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = DiffFrameStack(env, 2)
-    env = ContinuousLife(env, rollout)
+    env = DiffFrameStack(env, 3)
+    # env = ContinuousLife(env, rollout)
     # env = ReloadLevels(env, rollout)
     return env
 
