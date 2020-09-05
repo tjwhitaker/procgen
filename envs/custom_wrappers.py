@@ -5,6 +5,7 @@ from copy import copy
 from envs.procgen_env_wrapper import ProcgenEnvWrapper
 from collections import deque
 from ray.tune import registry
+from random import random
 
 
 class ReduceActions(gym.Wrapper):
@@ -127,13 +128,19 @@ class ContinuousLife(gym.Wrapper):
     def step(self, action):
         state, reward, done, info = self.env.step(action)
 
+        self.episode_step += 1
         self.episode_reward += reward
 
         if not self.rollout and done:
             if self.episode_reward >= self.reward_max[self.env.env_name]:
                 self.env.reset()
                 done = False
+            # elif self.episode_step > 1000:
+            #     reward = -1
+            # else:
+            #     reward = -0.25
 
+            self.episode_step = 0
             self.episode_reward = 0
 
         return state, reward, done, info
@@ -247,8 +254,7 @@ class DiffFrameStack(gym.Wrapper):
 
     def _get_ob(self):
         assert len(self.frames) == self.n
-        frames = [self.frames[2], abs(
-            self.frames[2] - self.frames[1]), abs(self.frames[2] - self.frames[0])]
+        frames = [self.frames[1], abs(self.frames[1] - self.frames[0])]
         return np.concatenate(frames, axis=2)
 
 
@@ -257,8 +263,8 @@ def create_env(config):
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = DiffFrameStack(env, 3)
-    # env = ContinuousLife(env, rollout)
+    env = DiffFrameStack(env, 2)
+    env = ContinuousLife(env, rollout)
     # env = ReloadLevels(env, rollout)
     return env
 
