@@ -11,7 +11,7 @@ procgen-pe:
 
   config:
     env_config:
-      env_name: coinrun
+      env_name: bigfish
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -57,15 +57,15 @@ procgen-pe:
     exploration_config:
       type: "StochasticSampling"
 
-    num_workers: 2
+    num_workers: 4
     num_envs_per_worker: 32
     rollout_fragment_length: 256
-    batch_mode: complete_episodes
+    batch_mode: truncate_episodes
 
     num_cpus_per_worker: 1
     num_gpus_per_worker: 0.1
     num_cpus_for_driver: 1
-    num_gpus: 0.8
+    num_gpus: 0.6
 
     observation_filter: "NoFilter"
     synchronize_filters: False
