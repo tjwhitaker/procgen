@@ -97,51 +97,6 @@ class ReduceActions(gym.Wrapper):
         self.env.step(-1)
 
 
-class ContinuousLife(gym.Wrapper):
-    def __init__(self, env, rollout):
-        super(ContinuousLife, self).__init__(env)
-        self.rollout = rollout
-        self.episode_reward = 0
-        self.episode_step = 0
-
-        # See https://discourse.aicrowd.com/t/getting-rmax-from-environment/3362
-        self.reward_max = {
-            'coinrun': 10,
-            'starpilot': 64,
-            'caveflyer': 12,
-            'dodgeball': 19,
-            'fruitbot': 32.4,
-            'chaser': 13,
-            'miner': 13,
-            'jumper': 10,
-            'leaper': 10,
-            'maze': 10,
-            'bigfish': 40,
-            'heist': 10,
-            'climber': 12.6,
-            'plunder': 30,
-            'ninja': 10,
-            'bossfight': 13,
-            'caterpillar': 24,
-        }
-
-    def step(self, action):
-        state, reward, done, info = self.env.step(action)
-
-        self.episode_step += 1
-        self.episode_reward += reward
-
-        if not self.rollout and done:
-            if self.episode_reward >= self.reward_max[self.env.env_name]:
-                self.env.reset()
-                done = False
-
-            self.episode_step = 0
-            self.episode_reward = 0
-
-        return state, reward, done, info
-
-
 class FrameStack(gym.Wrapper):
     def __init__(self, env, n):
         super(FrameStack, self).__init__(env)
@@ -205,8 +160,6 @@ def create_env(config):
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
     env = DiffFrameStack(env, 2)
-    # env = ContinuousLife(env, rollout)
-    # env = ReloadLevels(env, rollout)
     return env
 
 
