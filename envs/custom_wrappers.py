@@ -125,9 +125,9 @@ class FrameStack(gym.Wrapper):
         return np.concatenate(self.frames, axis=2)
 
 
-class DiffFrameStack(gym.Wrapper):
+class DiffStack(gym.Wrapper):
     def __init__(self, env, n):
-        super(DiffFrameStack, self).__init__(env)
+        super(DiffStack, self).__init__(env)
         self.n = n
         self.frames = deque([], maxlen=n)
         shp = env.observation_space.shape
@@ -154,12 +154,41 @@ class DiffFrameStack(gym.Wrapper):
         return np.concatenate(frames, axis=2)
 
 
+# class RandomTransform(gym.Wrapper):
+#     def __init__(self, env, rollout):
+#         super(RandomTransform, self).__init__(env)
+#         self.rollout = rollout
+
+#     def step(self, action):
+#         state, reward, done, info = self.env.step(action)
+#         return self.transform(state), reward, done, info
+
+#     def transform(self, state):
+#         return self.cutout(state)
+
+#     def cutout(self, state):
+#         mincut = 10
+#         maxcut = 20
+
+#         cut_width = np.random.randint(mincut, maxcut)
+#         cut_height = np.random.randint(mincut, maxcut)
+
+#         cut_start = np.random.randint(0, 64)
+
+#         state[cut_start:max(cut_start+cut_width, 64),
+#               cut_start:max(cut_start+cut_height, 64), :] = 0
+
+#         return state
+
+
 def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    env = DiffFrameStack(env, 2)
+    env = DiffStack(env, 2)
+    # env = RandomTransform(env, rollout)
+
     return env
 
 

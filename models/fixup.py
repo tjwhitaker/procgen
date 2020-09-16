@@ -3,6 +3,7 @@ from ray.rllib.models import ModelCatalog
 from ray.rllib.utils.annotations import override
 from ray.rllib.utils import try_import_torch
 import math
+from random import random
 
 torch, nn = try_import_torch()
 
@@ -22,10 +23,10 @@ class FixupCNN(TorchModelV2, nn.Module):
                               model_config, name)
         nn.Module.__init__(self)
 
-        h, w, c = obs_space.shape
-        depth_in = c
+        _, _, depth_in = obs_space.shape
 
         layers = []
+
         for depth_out in [32, 64, 64]:
             layers.extend([
                 nn.Conv2d(depth_in, depth_out, 3, padding=1),
@@ -35,11 +36,14 @@ class FixupCNN(TorchModelV2, nn.Module):
                 FixupResidual(depth_out, 8),
             ])
             depth_in = depth_out
+
         layers.extend([
             FixupResidual(depth_in, 8),
             FixupResidual(depth_in, 8),
         ])
+
         self.conv_layers = nn.Sequential(*layers)
+
         self.hidden_fc = nn.Linear(in_features=4096, out_features=256)
         self.logits_fc = nn.Linear(in_features=256, out_features=num_outputs)
         self.value_fc = nn.Linear(in_features=256, out_features=1)
@@ -47,7 +51,8 @@ class FixupCNN(TorchModelV2, nn.Module):
     def forward(self, input_dict, state, seq_lens):
         x = input_dict["obs"].float()
         x = x / 255.0
-        x = x.permute(0, 3, 1, 2).contiguous()
+        x = x.permute(0, 3, 1, 2)
+        x = x.contiguous()
         x = self.conv_layers(x)
         x = nn.functional.relu(x)
         x = x.view(x.shape[0], -1)
@@ -63,6 +68,54 @@ class FixupCNN(TorchModelV2, nn.Module):
     def value_function(self):
         assert self._value is not None, "must call forward() first"
         return self._value
+
+    def create_ensemble(self, population):
+        self.ensemble_weights = []
+        self.og_weights = self.logits_fc.weight.detach().clone()
+
+        for _ in range(population):
+            weights = self.og_weights.detach().clone()
+
+            # Prune weights
+            for i in range(weights.shape[0]):
+                for j in range(weights.shape[1]):
+                    if random() < 0.2:
+                        weights[i, j] = 0
+
+            self.ensemble_weights.append(weights)
+
+    def ensemble_forward(self, obs, population):
+        with torch.no_grad():
+            x = torch.from_numpy(obs).to(
+                torch.device("cuda")).unsqueeze(0).float()
+            x = x / 255.0
+            x = x.permute(0, 3, 1, 2)
+            x = x.contiguous()
+            x = self.conv_layers(x)
+            x = nn.functional.relu(x)
+            x = x.view(x.shape[0], -1)
+            x = self.hidden_fc(x)
+            x = nn.functional.relu(x)
+
+            # Prime ensemble with original output
+            output = self.logits_fc(x)
+            ensemble_logits = [output]
+
+            for weights in self.ensemble_weights:
+                self.logits_fc.weight = nn.Parameter(
+                    weights, requires_grad=False)
+
+                ensemble_logits.append(self.logits_fc(x))
+
+            logits = sum(ensemble_logits)
+
+            # Reset paramaters to original
+            self.logits_fc.weight = nn.Parameter(
+                self.og_weights, requires_grad=False)
+
+            dist = torch.distributions.Categorical(logits=logits)
+
+            return dist.sample().cpu()
 
 
 class FixupResidual(nn.Module):

@@ -5,6 +5,8 @@ from ray.rllib.agents.ppo.ppo_torch_policy import PPOTorchPolicy
 from ray.rllib.policy.torch_policy import LearningRateSchedule, EntropyCoeffSchedule
 from ray.rllib.agents.ppo.ppo_torch_policy import KLCoeffMixin, ValueNetworkMixin
 
+from ray.rllib.agents.ppo.ppo_tf_policy import PPOTFPolicy
+
 
 def my_postprocess_ppo_gae(policy,
                            sample_batch,
@@ -67,8 +69,14 @@ def my_postprocess_ppo_gae(policy,
     return batch
 
 
-PseudoEnsemblePolicy = PPOTorchPolicy.with_updates(
-    postprocess_fn=my_postprocess_ppo_gae,
-    mixins=[LearningRateSchedule, EntropyCoeffSchedule,
-            KLCoeffMixin, ValueNetworkMixin]
-)
+# class PseudoEnsemblePolicy(PPOTorchPolicy):
+#     def __init__(self):
+#         pass
+
+    # def compute_single_action():
+
+    # PseudoEnsemblePolicy = PPOTorchPolicy.with_updates(
+    #     postprocess_fn=my_postprocess_ppo_gae,
+    #     mixins=[LearningRateSchedule, EntropyCoeffSchedule,
+    #             KLCoeffMixin, ValueNetworkMixin]
+    # )
