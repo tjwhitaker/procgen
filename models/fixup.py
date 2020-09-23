@@ -17,10 +17,9 @@ class FixupCNN(TorchModelV2, nn.Module):
     https://github.com/unixpickle/obs-tower2
     """
 
-    def __init__(self, obs_space, action_space, num_outputs, model_config,
-                 name):
-        TorchModelV2.__init__(self, obs_space, action_space, num_outputs,
-                              model_config, name)
+    def __init__(self, obs_space, action_space, num_outputs, model_config, name, **kwargs):
+        TorchModelV2.__init__(self, obs_space, action_space,
+                              num_outputs, model_config, name)
         nn.Module.__init__(self)
 
         _, _, depth_in = obs_space.shape

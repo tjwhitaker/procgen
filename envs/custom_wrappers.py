@@ -183,7 +183,7 @@ class DiffStack(gym.Wrapper):
 
 def create_env(config):
     config = copy(config)
-    # rollout = config.pop("rollout")
+    rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
     env = DiffStack(env, 2)
