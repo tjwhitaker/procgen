@@ -22,7 +22,6 @@ procgen-pe:
       use_backgrounds: True
       restrict_themes: False
       use_monochrome_assets: False
-      rollout: False
 
     gamma: 0.999
     lambda: 0.95
