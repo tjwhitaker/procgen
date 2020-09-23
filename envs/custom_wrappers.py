@@ -27,65 +27,83 @@ class ReduceActions(gym.Wrapper):
 
         # Test Special Actions
         astates = []
-        for _ in range(8):
-            a, _, _, _ = self.env.step(4)
+        for _ in range(5):
+            a, _, done, _ = self.env.step(4)
             astates.append(a)
+            if done:
+                break
 
         self.unwrapped.env.env.callmethod("set_state", base_state)
 
         for action in [9, 10, 11, 12, 13, 14]:
             bstates = []
-            for _ in range(8):
-                b, _, _, _ = self.env.step(action)
+            for _ in range(5):
+                b, _, done, _ = self.env.step(action)
                 bstates.append(b)
+                if done:
+                    break
 
             state_checks = []
-            for i in range(8):
-                eql = astates[i] == bstates[i]
-                state_checks.append(eql.all())
 
-            if all(state_checks):
-                eliminate_actions.append(action)
+            if len(astates) == len(bstates):
+                for i in range(len(astates)):
+                    eql = astates[i] == bstates[i]
+                    state_checks.append(eql.all())
+
+                if all(state_checks):
+                    eliminate_actions.append(action)
 
             self.unwrapped.env.env.callmethod("set_state", base_state)
 
         # Test Diagonal == Horizontal Movement
-        for _ in range(4):
-            la, _, _, _ = self.env.step(1)
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     la, _, done, _ = self.env.step(1)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(4):
-            lb, _, _, _ = self.env.step(0)
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     lb, _, done, _ = self.env.step(0)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(4):
-            lc, _, _, _ = self.env.step(2)
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     lc, _, done, _ = self.env.step(2)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(4):
-            ra, _, _, _ = self.env.step(7)
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     ra, _, done, _ = self.env.step(7)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(4):
-            rb, _, _, _ = self.env.step(6)
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     rb, _, done, _ = self.env.step(6)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(4):
-            rc, _, _, _ = self.env.step(8)
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     rc, _, done, _ = self.env.step(8)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        # State Comparisons
-        lld = la == lb
-        llu = la == lc
-        rrd = ra == rb
-        rru = ra == rc
+        # # State Comparisons
+        # lld = la == lb
+        # llu = la == lc
+        # rrd = ra == rb
+        # rru = ra == rc
 
-        # Enforce symmetry if we remove diagonals
-        if lld.all() and llu.all() and rrd.all() and rru.all():
-            eliminate_actions.append(0)
-            eliminate_actions.append(2)
-            eliminate_actions.append(6)
-            eliminate_actions.append(8)
+        # # Enforce symmetry if we remove diagonals
+        # if lld.all() and llu.all() and rrd.all() and rru.all():
+        #     eliminate_actions.append(0)
+        #     eliminate_actions.append(2)
+        #     eliminate_actions.append(6)
+        #     eliminate_actions.append(8)
 
         # Build our action map
         actions = set([*range(15)])
