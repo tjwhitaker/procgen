@@ -82,6 +82,11 @@ class FixupCNN(TorchModelV2, nn.Module):
                     if random() < 0.2:
                         weights[i, j] = 0
 
+            # Gaussian Noise
+            # std = 0.01
+            # noise = torch.randn(weights.size()).cuda()*std
+            # weights += noise
+
             self.ensemble_weights.append(weights)
 
     def ensemble_forward(self, obs, population):
