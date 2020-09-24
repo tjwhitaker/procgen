@@ -55,7 +55,7 @@ class ReduceActions(gym.Wrapper):
 
             self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        # Test Diagonal == Horizontal Movement
+        # # Test Diagonal == Horizontal Movement
         # for _ in range(5):
         #     la, _, done, _ = self.env.step(1)
         #     if done:
