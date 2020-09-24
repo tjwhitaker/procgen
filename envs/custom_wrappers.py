@@ -27,7 +27,7 @@ class ReduceActions(gym.Wrapper):
 
         # Test Special Actions
         astates = []
-        for _ in range(5):
+        for _ in range(8):
             a, _, done, _ = self.env.step(4)
             astates.append(a)
             if done:
@@ -37,7 +37,7 @@ class ReduceActions(gym.Wrapper):
 
         for action in [9, 10, 11, 12, 13, 14]:
             bstates = []
-            for _ in range(5):
+            for _ in range(8):
                 b, _, done, _ = self.env.step(action)
                 bstates.append(b)
                 if done:
@@ -203,7 +203,7 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
-    env = ReduceActions(env)
+    # env = ReduceActions(env)
     env = DiffStack(env, 2)
     # env = RandomTransform(env, rollout)
 

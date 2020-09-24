@@ -30,7 +30,7 @@ class FixupCNN(TorchModelV2, nn.Module):
             layers.extend([
                 nn.Conv2d(depth_in, depth_out, 3, padding=1),
                 nn.MaxPool2d(3, stride=2, padding=1),
-                # nn.Dropout(0.25),
+                nn.Dropout(0.25),
                 FixupResidual(depth_out, 8),
                 FixupResidual(depth_out, 8),
             ])
