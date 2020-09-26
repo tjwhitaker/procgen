@@ -11,7 +11,7 @@ procgen-pe:
 
   config:
     env_config:
-      env_name: bigfish
+      env_name: chaser
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -43,7 +43,7 @@ procgen-pe:
     soft_horizon: False
     no_done_at_end: False
     normalize_actions: False
-    clip_rewards: True
+    clip_rewards: False
     clip_actions: True
     preprocessor_pref: deepmind
     ignore_worker_failures: False
