@@ -55,7 +55,7 @@ class ReduceActions(gym.Wrapper):
 
             self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        # # Test Diagonal == Horizontal Movement
+        # # Test Diagonal Movement
         # for _ in range(5):
         #     la, _, done, _ = self.env.step(1)
         #     if done:
@@ -203,7 +203,7 @@ def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
     env = ProcgenEnvWrapper(config)
-    env = ReduceActions(env)
+    # env = ReduceActions(env)
     env = DiffStack(env, 2)
     # env = RandomTransform(env, rollout)
 
