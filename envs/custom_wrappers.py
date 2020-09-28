@@ -143,6 +143,31 @@ class FrameStack(gym.Wrapper):
         return np.concatenate(self.frames, axis=2)
 
 
+class ContinuousLife(gym.Wrapper):
+    def __init__(self, env, rollout, reward_max):
+        super(ContinuousLife, self).__init__(env)
+        self.rollout = rollout
+        self.episode_reward = 0
+        self.episode_step = 0
+        self.reward_max = reward_max
+
+    def step(self, action):
+        state, reward, done, info = self.env.step(action)
+
+        self.episode_step += 1
+        self.episode_reward += reward
+
+        if not self.rollout and done:
+            if self.episode_reward >= self.reward_max:
+                self.env.reset()
+                done = False
+
+            self.episode_step = 0
+            self.episode_reward = 0
+
+        return state, reward, done, info
+
+
 class DiffStack(gym.Wrapper):
     def __init__(self, env, n):
         super(DiffStack, self).__init__(env)
@@ -175,9 +200,11 @@ class DiffStack(gym.Wrapper):
 def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
+    reward_max = config["return_max"]
     env = ProcgenEnvWrapper(config)
     # env = ReduceActions(env)
     env = DiffStack(env, 2)
+    env = ContinuousLife(env, rollout, reward_max)
 
     return env
 
