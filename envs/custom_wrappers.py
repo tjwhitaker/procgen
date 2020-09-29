@@ -16,7 +16,10 @@ class ReduceActions(gym.Wrapper):
         print(self.action_space)
 
     def step(self, action):
-        return self.env.step(self.action_map[action])
+        if action >= len(self.action_map):
+            return self.env.step(action)
+        else:
+            return self.env.step(self.action_map[action])
 
     # Environment Independent Action Reduction
     def reduce_action_space(self):
@@ -57,54 +60,54 @@ class ReduceActions(gym.Wrapper):
             self.unwrapped.env.env.callmethod("set_state", base_state)
 
         # Test Diagonal Movement
-        for _ in range(5):
-            la, _, done, _ = self.env.step(1)
-            if done:
-                break
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     la, _, done, _ = self.env.step(1)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
-            lb, _, done, _ = self.env.step(0)
-            if done:
-                break
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     lb, _, done, _ = self.env.step(0)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
-            lc, _, done, _ = self.env.step(2)
-            if done:
-                break
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     lc, _, done, _ = self.env.step(2)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
-            ra, _, done, _ = self.env.step(7)
-            if done:
-                break
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     ra, _, done, _ = self.env.step(7)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
-            rb, _, done, _ = self.env.step(6)
-            if done:
-                break
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     rb, _, done, _ = self.env.step(6)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        for _ in range(5):
-            rc, _, done, _ = self.env.step(8)
-            if done:
-                break
-        self.unwrapped.env.env.callmethod("set_state", base_state)
+        # for _ in range(5):
+        #     rc, _, done, _ = self.env.step(8)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        # State Comparisons
-        lld = la == lb
-        llu = la == lc
-        rrd = ra == rb
-        rru = ra == rc
+        # # State Comparisons
+        # lld = la == lb
+        # llu = la == lc
+        # rrd = ra == rb
+        # rru = ra == rc
 
-        # Enforce symmetry if we remove diagonals
-        if lld.all() and llu.all() and rrd.all() and rru.all():
-            eliminate_actions.append(0)
-            eliminate_actions.append(2)
-            eliminate_actions.append(6)
-            eliminate_actions.append(8)
+        # # Enforce symmetry if we remove diagonals
+        # if lld.all() and llu.all() and rrd.all() and rru.all():
+        #     eliminate_actions.append(0)
+        #     eliminate_actions.append(2)
+        #     eliminate_actions.append(6)
+        #     eliminate_actions.append(8)
 
         # Build our action map
         actions = set([*range(15)])
@@ -201,7 +204,7 @@ def create_env(config):
     # return_min = config.pop("return_min")
     # return_blind = config.pop("return_blind")
     env = ProcgenEnvWrapper(config)
-    # env = ReduceActions(env)
+    env = ReduceActions(env)
     # env = NormalizeRewards(env, rollout, return_max, return_min, return_blind)
     env = DiffStack(env, 2)
     # env = ContinuousLife(env, rollout, reward_max)
