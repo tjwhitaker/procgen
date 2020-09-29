@@ -174,17 +174,22 @@ class DiffStack(gym.Wrapper):
 
 
 class NormalizeRewards(gym.Wrapper):
-    def __init__(self, env, rollout, return_max, return_min):
+    def __init__(self, env, rollout, return_max, return_min, return_blind):
         super(NormalizeRewards, self).__init__(env)
         self.rollout = rollout
         self.max = return_max
         self.min = return_min
+        self.blind = abs(return_blind)
+        self.current_max = 1.0
 
     def step(self, action):
         state, reward, done, info = self.env.step(action)
 
+        if reward > self.current_max:
+            self.current_max = reward
+
         if not self.rollout:
-            reward = (reward - self.min) / (self.max - self.min)
+            reward = (reward - self.min) / (self.current_max - self.min)
 
         return state, reward, done, info
 
@@ -194,9 +199,10 @@ def create_env(config):
     rollout = config.pop("rollout")
     return_max = config.pop("return_max")
     return_min = config.pop("return_min")
+    return_blind = config.pop("return_blind")
     env = ProcgenEnvWrapper(config)
     # env = ReduceActions(env)
-    env = NormalizeRewards(env, rollout, return_max, return_min)
+    # env = NormalizeRewards(env, rollout, return_max, return_min, return_blind)
     env = DiffStack(env, 2)
     # env = ContinuousLife(env, rollout, reward_max)
     return env
