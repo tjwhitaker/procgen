@@ -196,10 +196,10 @@ class NormalizeRewards(gym.Wrapper):
 
 def create_env(config):
     config = copy(config)
-    rollout = config.pop("rollout")
-    return_max = config.pop("return_max")
-    return_min = config.pop("return_min")
-    return_blind = config.pop("return_blind")
+    # rollout = config.pop("rollout")
+    # return_max = config.pop("return_max")
+    # return_min = config.pop("return_min")
+    # return_blind = config.pop("return_blind")
     env = ProcgenEnvWrapper(config)
     # env = ReduceActions(env)
     # env = NormalizeRewards(env, rollout, return_max, return_min, return_blind)
