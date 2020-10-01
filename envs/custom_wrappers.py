@@ -13,7 +13,6 @@ class ReduceActions(gym.Wrapper):
         super(ReduceActions, self).__init__(env)
         self.action_map = []
         self.reduce_action_space()
-        print(self.action_space)
 
     def step(self, action):
         if action >= len(self.action_map):
@@ -96,11 +95,17 @@ class ReduceActions(gym.Wrapper):
         #         break
         # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        # # State Comparisons
+        # # Diagonal == horizontal?
         # lld = la == lb
         # llu = la == lc
         # rrd = ra == rb
         # rru = ra == rc
+
+        # Diagonal == vertical?
+        # ulu =
+        # uru =
+        # dld =
+        # drd =
 
         # # Enforce symmetry if we remove diagonals
         # if lld.all() and llu.all() and rrd.all() and rru.all():
@@ -176,38 +181,13 @@ class DiffStack(gym.Wrapper):
         return np.concatenate(frames, axis=2)
 
 
-class NormalizeRewards(gym.Wrapper):
-    def __init__(self, env, rollout, return_max, return_min, return_blind):
-        super(NormalizeRewards, self).__init__(env)
-        self.rollout = rollout
-        self.max = return_max
-        self.min = return_min
-        self.blind = abs(return_blind)
-        self.current_max = 1.0
-
-    def step(self, action):
-        state, reward, done, info = self.env.step(action)
-
-        if reward > self.current_max:
-            self.current_max = reward
-
-        if not self.rollout:
-            reward = (reward - self.min) / (self.current_max - self.min)
-
-        return state, reward, done, info
-
-
 def create_env(config):
     config = copy(config)
-    # rollout = config.pop("rollout")
-    # return_max = config.pop("return_max")
-    # return_min = config.pop("return_min")
-    # return_blind = config.pop("return_blind")
+
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
-    # env = NormalizeRewards(env, rollout, return_max, return_min, return_blind)
     env = DiffStack(env, 2)
-    # env = ContinuousLife(env, rollout, reward_max)
+
     return env
 
 
