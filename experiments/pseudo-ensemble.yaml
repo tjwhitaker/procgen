@@ -1,6 +1,6 @@
 procgen-pe:
   env: custom_wrapper
-  run: PPO
+  run: PseudoEnsemble
   disable_evaluation_worker: True
   stop:
     timesteps_total: 8000000
@@ -11,7 +11,7 @@ procgen-pe:
 
   config:
     env_config:
-      env_name: bigfish
+      env_name: coinrun
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -22,6 +22,8 @@ procgen-pe:
       use_backgrounds: True
       restrict_themes: False
       use_monochrome_assets: False
+      rollout: False
+      return_max: 10
 
     gamma: 0.999
     lambda: 0.95
@@ -32,8 +34,15 @@ procgen-pe:
     kl_coeff: 0.0
     kl_target: 0.01
     vf_loss_coeff: 0.5
-    entropy_coeff: 0.001
-    entropy_coeff_schedule: [[0, 0.001], [4000000, 0.001], [4000001, 0.0]]
+    entropy_coeff: 0.01
+    entropy_coeff_schedule:
+      [
+        [0, 0.01],
+        [2000000, 0.01],
+        [2000001, 0.001],
+        [4000000, 0.001],
+        [4000001, 0.0],
+      ]
     clip_param: 0.2
     vf_clip_param: 0.2
     grad_clip: 0.5
@@ -47,20 +56,19 @@ procgen-pe:
     preprocessor_pref: deepmind
     ignore_worker_failures: False
     log_sys_usage: True
-    use_pytorch: True
+    framework: torch
 
     model:
       custom_model: fixup
-      custom_options: {}
 
     explore: True,
     exploration_config:
       type: "StochasticSampling"
 
-    num_workers: 4
+    num_workers: 2
     num_envs_per_worker: 32
     rollout_fragment_length: 256
-    batch_mode: truncate_episodes
+    batch_mode: complete_episodes
     shuffle_sequences: True
 
     num_cpus_per_worker: 1

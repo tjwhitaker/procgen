@@ -125,4 +125,4 @@ class ResNet(TorchModelV2, nn.Module):
         return logits, state
 
 
-ModelCatalog.register_custom_model("resnet", ResNet)
+# ModelCatalog.register_custom_model("resnet", ResNet)

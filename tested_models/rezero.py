@@ -105,4 +105,4 @@ class ReZeroCNN(TorchModelV2, nn.Module):
         return self._value
 
 
-ModelCatalog.register_custom_model("rezero", ReZeroCNN)
+# ModelCatalog.register_custom_model("rezero", ReZeroCNN)
