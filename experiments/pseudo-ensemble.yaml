@@ -1,6 +1,6 @@
 procgen-pe:
   env: custom_wrapper
-  run: PseudoEnsemble
+  run: PPO
   disable_evaluation_worker: True
   stop:
     timesteps_total: 8000000
