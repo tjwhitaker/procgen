@@ -27,7 +27,7 @@ procgen-pe:
 
     gamma: 0.999
     lambda: 0.95
-    lr: 3.0e-4
+    lr: 2.5e-4
     num_sgd_iter: 3
     sgd_minibatch_size: 2048 # 8 minibatches per epoch
     train_batch_size: 16384 # 256 * 32
@@ -38,8 +38,8 @@ procgen-pe:
     entropy_coeff_schedule:
       [
         [0, 0.01],
-        [2000000, 0.01],
-        [2000001, 0.001],
+        [4000000, 0.01],
+        [4000001, 0.001],
         [6000000, 0.001],
         [6000001, 0.0],
       ]
@@ -51,7 +51,7 @@ procgen-pe:
     soft_horizon: False
     no_done_at_end: False
     normalize_actions: False
-    clip_rewards: True
+    clip_rewards: False
     clip_actions: True
     preprocessor_pref: deepmind
     ignore_worker_failures: False

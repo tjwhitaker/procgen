@@ -22,7 +22,9 @@ procgen-rainbow:
       use_backgrounds: True
       restrict_themes: False
       use_monochrome_assets: False
-
+      rollout: False
+      return_max: 40
+      
     num_atoms: 51
     noisy: False
     gamma: 0.999
@@ -30,7 +32,7 @@ procgen-rainbow:
     learning_starts: 10000
     buffer_size: 100000
     rollout_fragment_length: 256
-    train_batch_size: 16384
+    train_batch_size: 32
     exploration_config:
       epsilon_timesteps: 2
       final_epsilon: 0.0
