@@ -215,7 +215,7 @@ class ShapeReward(gym.Wrapper):
     def step(self, action):
         state, reward, done, info = self.env.step(action)
 
-        if (not self.rollout) and (reward != 0):
+        if (not self.rollout) and (reward > 0):
             reward = np.log(reward+1)
 
         return state, reward, done, info
