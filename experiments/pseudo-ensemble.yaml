@@ -11,7 +11,7 @@ procgen-pe:
 
   config:
     env_config:
-      env_name: coinrun
+      env_name: miner
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -23,18 +23,18 @@ procgen-pe:
       restrict_themes: False
       use_monochrome_assets: False
       rollout: False
-      return_max: 10
 
     gamma: 0.999
     lambda: 0.95
-    lr: 2.75e-4
+    lr: 3.0e-4
     num_sgd_iter: 3
     sgd_minibatch_size: 2048 # 8 minibatches per epoch
     train_batch_size: 16384 # 256 * 32
     kl_coeff: 0.0
     kl_target: 0.01
     vf_loss_coeff: 0.5
-    entropy_coeff: 0.01
+    entropy_coeff: 0.001
+    entropy_coeff_schedule: [[0, 0.001], [4000000, 0.001], [4000001, 0.0]]
     clip_param: 0.2
     vf_clip_param: 0.2
     grad_clip: 0.5
@@ -58,9 +58,9 @@ procgen-pe:
       type: "StochasticSampling"
 
     num_workers: 4
-    num_envs_per_worker: 32
+    num_envs_per_worker: 16
     rollout_fragment_length: 256
-    batch_mode: complete_episodes
+    batch_mode: truncate_episodes
     shuffle_sequences: True
 
     num_cpus_per_worker: 1

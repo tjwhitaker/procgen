@@ -58,39 +58,69 @@ class ReduceActions(gym.Wrapper):
 
             self.unwrapped.env.env.callmethod("set_state", base_state)
 
+        # movement_states = {}
+
         # Test Diagonal Movement
+        # Left
         # for _ in range(5):
-        #     la, _, done, _ = self.env.step(1)
+        #     s, _, done, _ = self.env.step(1)
+        #     movement_states["l"].append(s)
         #     if done:
         #         break
         # self.unwrapped.env.env.callmethod("set_state", base_state)
 
+        # # Left Down
         # for _ in range(5):
-        #     lb, _, done, _ = self.env.step(0)
+        #     s, _, done, _ = self.env.step(0)
+        #     movement_states["ld"].append(s)
         #     if done:
         #         break
         # self.unwrapped.env.env.callmethod("set_state", base_state)
 
+        # # Left Up
         # for _ in range(5):
-        #     lc, _, done, _ = self.env.step(2)
+        #     s, _, done, _ = self.env.step(2)
+        #     movement_states["lu"].append(s)
         #     if done:
         #         break
         # self.unwrapped.env.env.callmethod("set_state", base_state)
 
+        # # Up
         # for _ in range(5):
-        #     ra, _, done, _ = self.env.step(7)
+        #     s, _, done, _ = self.env.step(5)
+        #     movement_states["u"].append(s)
         #     if done:
         #         break
         # self.unwrapped.env.env.callmethod("set_state", base_state)
 
+        # # Right
         # for _ in range(5):
-        #     rb, _, done, _ = self.env.step(6)
+        #     s, _, done, _ = self.env.step(7)
+        #     movement_states["r"].append(s)
         #     if done:
         #         break
         # self.unwrapped.env.env.callmethod("set_state", base_state)
 
+        # # Right Down
         # for _ in range(5):
-        #     rc, _, done, _ = self.env.step(8)
+        #     s, _, done, _ = self.env.step(6)
+        #     movement_states["rd"].append(s)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        # # Right Up
+        # for _ in range(5):
+        #     s, _, done, _ = self.env.step(8)
+        #     movement_states["ru"].append(s)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        # # Down
+        # for _ in range(5):
+        #     s, _, done, _ = self.env.step(3)
+        #     movement_states["d"].append(s)
         #     if done:
         #         break
         # self.unwrapped.env.env.callmethod("set_state", base_state)
@@ -215,7 +245,7 @@ class ShapeReward(gym.Wrapper):
     def step(self, action):
         state, reward, done, info = self.env.step(action)
 
-        if (not self.rollout) and (reward > 0):
+        if (not self.rollout) and (reward > 1):
             reward = np.log(reward+1)
 
         return state, reward, done, info
@@ -224,7 +254,6 @@ class ShapeReward(gym.Wrapper):
 def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
-    return_max = config.pop("return_max")
 
     env = ProcgenEnvWrapper(config)
     env = ReduceActions(env)
