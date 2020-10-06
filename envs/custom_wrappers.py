@@ -249,7 +249,7 @@ class ShapeReward(gym.Wrapper):
             if reward > 1:
                 reward = np.log(reward+1)
             if reward > 0 and reward < 1:
-                reward = 0.9
+                reward = 1.0
 
         return state, reward, done, info
 
