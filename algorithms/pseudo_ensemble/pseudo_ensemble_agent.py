@@ -29,10 +29,10 @@ class PseudoEnsembleAgent(PseudoEnsembleTrainer):
             preprocessed, update=False)
 
         model = self.get_policy(policy_id).model
-        action = model.ensemble_forward(filtered_obs, 4)
+        action = model.ensemble_forward(filtered_obs, 8)
 
         return action
 
     def restore(self, checkpoint_path):
         super().restore(checkpoint_path)
-        self.get_policy(DEFAULT_POLICY_ID).model.create_ensemble(4)
+        self.get_policy(DEFAULT_POLICY_ID).model.create_ensemble(8)
