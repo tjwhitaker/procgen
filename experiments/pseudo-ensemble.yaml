@@ -26,8 +26,8 @@ procgen-pe:
 
     gamma: 0.999
     lambda: 0.95
-    lr: 3.5e-4
-    lr_schedule: [[0, 3.5e-4], [8000000, 3.0e-4]]
+    lr: 3.25e-4
+    lr_schedule: [[0, 3.25e-4], [8000000, 2.75e-4]]
     num_sgd_iter: 3
     sgd_minibatch_size: 2048 # 8 minibatches per epoch
     train_batch_size: 16384 # 256 * 32
