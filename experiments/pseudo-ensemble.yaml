@@ -27,6 +27,7 @@ procgen-pe:
     gamma: 0.999
     lambda: 0.95
     lr: 3.0e-4
+    lr_schedule: [[0, 3.0e-4], [8000000, 2.5e-4]]
     num_sgd_iter: 3
     sgd_minibatch_size: 2048 # 8 minibatches per epoch
     train_batch_size: 16384 # 256 * 32
@@ -65,7 +66,7 @@ procgen-pe:
       type: "StochasticSampling"
 
     num_workers: 4
-    num_envs_per_worker: 64
+    num_envs_per_worker: 32
     rollout_fragment_length: 256
     batch_mode: complete_episodes
     shuffle_sequences: True
