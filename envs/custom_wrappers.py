@@ -248,10 +248,6 @@ class ShapeReward(gym.Wrapper):
         if not self.rollout:
             if reward > 0:
                 reward = np.log(reward+1)
-            # if reward > 1:
-            #     reward = 1
-            # if reward < -1:
-            #     reward = -1
 
         return state, reward, done, info
 
@@ -261,7 +257,7 @@ def create_env(config):
     rollout = config.pop("rollout")
 
     env = ProcgenEnvWrapper(config)
-    # env = ReduceActions(env)
+    env = ReduceActions(env)
     env = DiffStack(env, 2)
     # env = ContinuousLife(env, rollout, return_max)
     # env = FrameStack(env, 3)
