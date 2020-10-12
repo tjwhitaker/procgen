@@ -104,11 +104,12 @@ class FixupCNN(TorchModelV2, nn.Module):
             output = self.logits_fc(x)
             ensemble_logits = [output]
 
-            for weights in self.ensemble_weights:
-                self.logits_fc.weight = nn.Parameter(
-                    weights, requires_grad=False)
+            if random() > 0.8:
+                for weights in self.ensemble_weights:
+                    self.logits_fc.weight = nn.Parameter(
+                        weights, requires_grad=False)
 
-                ensemble_logits.append(self.logits_fc(x))
+                    ensemble_logits.append(self.logits_fc(x))
 
             logits = sum(ensemble_logits)
 
