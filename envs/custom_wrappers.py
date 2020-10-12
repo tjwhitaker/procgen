@@ -28,7 +28,10 @@ class ReduceActions(gym.Wrapper):
         eliminate_actions = []
         base_state = self.unwrapped.env.env.callmethod("get_state")
 
+        ######################
         # Test Special Actions
+        ######################
+
         astates = []
         for _ in range(10):
             a, _, done, _ = self.env.step(4)
@@ -58,10 +61,21 @@ class ReduceActions(gym.Wrapper):
 
             self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        # movement_states = {}
+        movement_states = {}
 
-        # Test Diagonal Movement
-        # Left
+        # ###############
+        # # Test Movement
+        # ###############
+
+        # # Do Nothing
+        # for _ in range(5):
+        #     s, _, done, _ = self.env.step(4)
+        #     movement_states["c"].append(s)
+        #     if done:
+        #         break
+        # self.unwrapped.env.env.callmethod("set_state", base_state)
+
+        # # Left
         # for _ in range(5):
         #     s, _, done, _ = self.env.step(1)
         #     movement_states["l"].append(s)
@@ -125,17 +139,11 @@ class ReduceActions(gym.Wrapper):
         #         break
         # self.unwrapped.env.env.callmethod("set_state", base_state)
 
-        # # Diagonal == horizontal?
-        # lld = la == lb
-        # llu = la == lc
-        # rrd = ra == rb
-        # rru = ra == rc
+        # # Do some actions not do anything?
+        # # i.e. Plunder Up/Down
 
-        # Diagonal == vertical?
-        # ulu =
-        # uru =
-        # dld =
-        # drd =
+        # # Do we need diagonals?
+        # # i.e Miner, Maze, Chaser
 
         # # Enforce symmetry if we remove diagonals
         # if lld.all() and llu.all() and rrd.all() and rru.all():
@@ -257,7 +265,7 @@ def create_env(config):
     rollout = config.pop("rollout")
 
     env = ProcgenEnvWrapper(config)
-    # env = ReduceActions(env)
+    env = ReduceActions(env)
     env = DiffStack(env, 2)
     # env = ContinuousLife(env, rollout, return_max)
     # env = FrameStack(env, 3)

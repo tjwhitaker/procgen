@@ -5,6 +5,8 @@ from ray.rllib.utils import try_import_torch
 import math
 from random import random
 
+import kornia
+
 torch, nn = try_import_torch()
 
 
@@ -23,6 +25,13 @@ class FixupCNN(TorchModelV2, nn.Module):
         nn.Module.__init__(self)
 
         _, _, depth_in = obs_space.shape
+
+        # transforms = [
+        #     kornia.augmentation.RandomResizedCrop(
+        #         size=(64, 64), scale=(0.75, 1.0)),
+        # ]
+
+        # layers = [*transforms]
 
         layers = []
 
