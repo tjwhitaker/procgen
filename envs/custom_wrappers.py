@@ -241,7 +241,7 @@ def create_env(config):
     rollout = config.pop("rollout")
 
     env = ProcgenEnvWrapper(config)
-    env = ReduceActions(env)
+    # env = ReduceActions(env)
     env = DiffStack(env, 2)
     # env = FrameStack(env, 3)
     env = ShapeReward(env, rollout)
