@@ -27,13 +27,14 @@ procgen-pe:
     gamma: 0.99
     lambda: 0.95
     lr: 2.0e-4
+    lr_schedule: [[0, 3.0e-4], [4000000, 2.0e-4]]
     num_sgd_iter: 3
     sgd_minibatch_size: 2048 # 8 minibatches per epoch
     train_batch_size: 16384 # 256 * 32
     kl_coeff: 0.0
     kl_target: 0.01
     vf_loss_coeff: 0.5
-    entropy_coeff: 0.001
+    entropy_coeff: 0.0
     entropy_coeff_schedule: [[0, 0.01], [4000000, 0.0]]
     clip_param: 0.2
     vf_clip_param: 0.2
