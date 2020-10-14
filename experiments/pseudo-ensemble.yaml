@@ -33,8 +33,8 @@ procgen-pe:
     kl_coeff: 0.0
     kl_target: 0.01
     vf_loss_coeff: 0.5
-    entropy_coeff: 0.01
-    entropy_coeff_schedule: [[0, 0.01], [4000000, 0.0]]
+    entropy_coeff: 0.001
+    entropy_coeff_schedule: [[0, 0.01], [1000000, 0.01], [2000000, 0.0]]
     clip_param: 0.2
     vf_clip_param: 0.2
     grad_clip: 0.5
@@ -43,7 +43,7 @@ procgen-pe:
     soft_horizon: False
     no_done_at_end: False
     normalize_actions: False
-    clip_rewards: False
+    clip_rewards: 1.0
     clip_actions: True
     preprocessor_pref: deepmind
     ignore_worker_failures: False
@@ -57,7 +57,7 @@ procgen-pe:
     exploration_config:
       type: "StochasticSampling"
 
-    num_workers: 4
+    num_workers: 3
     num_envs_per_worker: 64
     rollout_fragment_length: 256
     batch_mode: complete_episodes
@@ -66,7 +66,7 @@ procgen-pe:
     num_cpus_per_worker: 1
     num_gpus_per_worker: 0.1
     num_cpus_for_driver: 1
-    num_gpus: 0.6
+    num_gpus: 0.7
 
     observation_filter: "NoFilter"
     synchronize_filters: False
