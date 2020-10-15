@@ -88,7 +88,7 @@ class FixupCNN(TorchModelV2, nn.Module):
             # Prune weights
             for i in range(weights.shape[0]):
                 for j in range(weights.shape[1]):
-                    if random() < 0.2:
+                    if random() < 0.5:
                         weights[i, j] = 0
 
             # Gaussian Noise
