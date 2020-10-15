@@ -230,7 +230,7 @@ class ShapeReward(gym.Wrapper):
         state, reward, done, info = self.env.step(action)
 
         if not self.rollout:
-            if reward > 0:
+            if reward > 1:
                 reward = np.log(reward+1)
 
         return state, reward, done, info
@@ -244,7 +244,7 @@ def create_env(config):
     # env = ReduceActions(env)
     env = DiffStack(env, 2)
     # env = FrameStack(env, 3)
-    # env = ShapeReward(env, rollout)
+    env = ShapeReward(env, rollout)
 
     return env
 
