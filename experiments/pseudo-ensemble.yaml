@@ -11,7 +11,7 @@ procgen-pe:
 
   config:
     env_config:
-      env_name: miner
+      env_name: coinrun
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -23,6 +23,7 @@ procgen-pe:
       restrict_themes: False
       use_monochrome_assets: False
       rollout: False
+      return_max: 10
 
     gamma: 0.999
     lambda: 0.95
