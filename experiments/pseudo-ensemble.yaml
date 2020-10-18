@@ -27,17 +27,27 @@ procgen-pe:
 
     gamma: 0.999
     lambda: 0.95
-    lr: 3.5e-4
+    lr: 5.0e-4
+    lr_schedule:
+      [
+        [0, 5.0e-4], [1000000, 1.0e-4],
+        [1000001, 5.0e-4], [2000000, 1.0e-4],
+        [2000001, 5.0e-4], [3000000, 1.0e-4],
+        [3000001, 5.0e-4], [4000000, 1.0e-4],
+        [4000001, 5.0e-4], [5000000, 1.0e-4],
+        [5000001, 5.0e-4], [6000000, 1.0e-4],
+        [6000001, 5.0e-4], [7000000, 1.0e-4],
+        [7000001, 5.0e-4], [8000000, 1.0e-4]
+      ]
     num_sgd_iter: 3
     sgd_minibatch_size: 2048 # 8 minibatches per epoch
     train_batch_size: 16384 # 256 * 32
-    kl_coeff: 0.2
+    kl_coeff: 0.5
     kl_target: 0.01
     vf_loss_coeff: 0.5
-    entropy_coeff: 0.01
-    entropy_coeff_schedule: [[0, 0.01], [2000000, 0.001]]
+    entropy_coeff: 0.001
     clip_param: 0.2
-    vf_clip_param: 0.2
+    vf_clip_param: 10.0
     grad_clip: 0.5
     vf_share_layers: True
     horizon: null
@@ -61,7 +71,7 @@ procgen-pe:
     num_workers: 3
     num_envs_per_worker: 128
     rollout_fragment_length: 256
-    batch_mode: complete_episodes
+    batch_mode: truncate_episodes
     shuffle_sequences: True
 
     num_cpus_per_worker: 1
