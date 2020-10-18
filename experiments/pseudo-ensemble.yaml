@@ -27,7 +27,7 @@ procgen-pe:
 
     gamma: 0.999
     lambda: 0.95
-    lr: 5.0e-4
+    lr: 3.5e-4
     num_sgd_iter: 3
     sgd_minibatch_size: 2048 # 8 minibatches per epoch
     train_batch_size: 16384 # 256 * 32
@@ -44,7 +44,7 @@ procgen-pe:
     soft_horizon: False
     no_done_at_end: False
     normalize_actions: False
-    clip_rewards: False
+    clip_rewards: 1.0
     clip_actions: True
     preprocessor_pref: deepmind
     ignore_worker_failures: False
@@ -61,7 +61,7 @@ procgen-pe:
     num_workers: 3
     num_envs_per_worker: 128
     rollout_fragment_length: 256
-    batch_mode: complete_episodes
+    batch_mode: truncate_episodes
     shuffle_sequences: True
 
     num_cpus_per_worker: 1
