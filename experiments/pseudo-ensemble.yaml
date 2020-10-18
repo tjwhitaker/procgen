@@ -61,7 +61,7 @@ procgen-pe:
     num_workers: 3
     num_envs_per_worker: 128
     rollout_fragment_length: 256
-    batch_mode: truncate_episodes
+    batch_mode: complete_episodes
     shuffle_sequences: True
 
     num_cpus_per_worker: 1
