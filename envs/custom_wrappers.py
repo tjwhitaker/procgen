@@ -235,6 +235,7 @@ class ShapeReward(gym.Wrapper):
 
         return state, reward, done, info
 
+
 class ContinuousLife(gym.Wrapper):
     def __init__(self, env, rollout, reward_max):
         super(ContinuousLife, self).__init__(env)
@@ -259,6 +260,7 @@ class ContinuousLife(gym.Wrapper):
 
         return state, reward, done, info
 
+
 def create_env(config):
     config = copy(config)
     rollout = config.pop("rollout")
@@ -266,9 +268,9 @@ def create_env(config):
 
     env = ProcgenEnvWrapper(config)
     # env = ReduceActions(env)
-    # env = DiffStack(env, 2)
+    env = DiffStack(env, 2)
+    # env = FrameStack(env, 2)
     env = ContinuousLife(env, rollout, return_max)
-    # env = FrameStack(env, 3)
     # env = ShapeReward(env, rollout)
 
     return env
