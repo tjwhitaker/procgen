@@ -76,7 +76,7 @@ procgen-pe:
       type: "StochasticSampling"
 
     num_workers: 3
-    num_envs_per_worker: 16
+    num_envs_per_worker: 8
     rollout_fragment_length: 256
     batch_mode: complete_episodes
     shuffle_sequences: True
