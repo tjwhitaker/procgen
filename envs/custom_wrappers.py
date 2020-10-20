@@ -270,7 +270,7 @@ def create_env(config):
     # env = ReduceActions(env)
     env = DiffStack(env, 2)
     # env = FrameStack(env, 3)
-    env = ContinuousLife(env, rollout, return_max)
+    # env = ContinuousLife(env, rollout, return_max)
     # env = ShapeReward(env, rollout)
 
     return env
