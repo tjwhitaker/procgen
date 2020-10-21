@@ -55,7 +55,7 @@ procgen-pe:
     soft_horizon: False
     no_done_at_end: False
     normalize_actions: False
-    clip_rewards: 1.0
+    clip_rewards: False
     clip_actions: True
     preprocessor_pref: deepmind
     ignore_worker_failures: False
@@ -76,7 +76,7 @@ procgen-pe:
     shuffle_sequences: True
 
     num_cpus_per_worker: 1
-    num_gpus_per_worker: 0.2
+    num_gpus_per_worker: 0.1
     num_cpus_for_driver: 1
     num_gpus: 0.6
 
