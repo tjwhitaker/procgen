@@ -242,9 +242,9 @@ def create_env(config):
 
     env = ProcgenEnvWrapper(config)
     # env = ReduceActions(env)
-    # env = DiffStack(env, 2)
-    env = FrameStack(env, 3)
-    env = ShapeReward(env, rollout)
+    env = DiffStack(env, 2)
+    # env = FrameStack(env, 3)
+    # env = ShapeReward(env, rollout)
 
     return env
 
