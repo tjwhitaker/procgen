@@ -85,7 +85,7 @@ def create_env(config):
     config = copy(config)
 
     env = ProcgenEnvWrapper(config)
-    env = DiffStack(env, 2)
+    # env = DiffStack(env, 2)
     # env = FrameStack(env, 4)
     # env = ShapeReward(env, rollout)
 
