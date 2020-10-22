@@ -71,15 +71,15 @@ class ReZeroCNN(TorchModelV2, nn.Module):
         shape = (c, h, w)
 
         conv_seqs = []
-        for out_channels in [32, 64, 64]:
+        for out_channels in [16, 32, 32]:
             conv_seq = ConvSequence(shape, out_channels)
             shape = conv_seq.get_output_shape()
             conv_seqs.append(conv_seq)
-        conv_seqs.append(ResidualBlock(64))
-        conv_seqs.append(ResidualBlock(64))
+        conv_seqs.append(ResidualBlock(32))
+        conv_seqs.append(ResidualBlock(32))
         self.conv_seqs = nn.ModuleList(conv_seqs)
         self.hidden_fc = nn.Linear(
-            in_features=4096, out_features=256)
+            in_features=2048, out_features=256)
         self.logits_fc = nn.Linear(in_features=256, out_features=num_outputs)
         self.value_fc = nn.Linear(in_features=256, out_features=1)
 
@@ -105,4 +105,4 @@ class ReZeroCNN(TorchModelV2, nn.Module):
         return self._value
 
 
-# ModelCatalog.register_custom_model("rezero", ReZeroCNN)
+ModelCatalog.register_custom_model("rezero", ReZeroCNN)

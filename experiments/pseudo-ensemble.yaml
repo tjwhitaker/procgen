@@ -11,7 +11,7 @@ procgen-pe:
 
   config:
     env_config:
-      env_name: bigfish
+      env_name: plunder
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -22,20 +22,18 @@ procgen-pe:
       use_backgrounds: True
       restrict_themes: False
       use_monochrome_assets: False
-      rollout: False
-      return_max: 10
 
     gamma: 0.99
     lambda: 0.95
-    lr: 5.0e-4
+    lr: 3.25e-4
     num_sgd_iter: 3
     sgd_minibatch_size: 1024
     train_batch_size: 8192
-    kl_coeff: 0.0
+    kl_coeff: 0.2
     kl_target: 0.01
     vf_loss_coeff: 0.5
     entropy_coeff: 0.01
-    entropy_coeff_schedule: [[0, 0.01], [1000000, 0.01], [2000000, 0.001]]
+    entropy_coeff_schedule: [[0, 0.01], [3000000, 0.01], [3000001, 0.0]]
     clip_param: 0.2
     vf_clip_param: 0.2
     grad_clip: 0.5
