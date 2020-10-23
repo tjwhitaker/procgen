@@ -23,7 +23,7 @@ procgen-pe:
       restrict_themes: False
       use_monochrome_assets: False
 
-    gamma: 0.99
+    gamma: 0.999
     lambda: 0.95
     lr: 2.5e-4
     num_sgd_iter: 3
