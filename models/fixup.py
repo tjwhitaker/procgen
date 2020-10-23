@@ -44,18 +44,16 @@ class FixupCNN(TorchModelV2, nn.Module):
             ])
             depth_in = depth_out
 
-        # layers.extend([
-        #     FixupResidual(depth_in, 8),
-        #     FixupResidual(depth_in, 8),
-        # ])
+        layers.extend([
+            FixupResidual(depth_in, 8),
+            FixupResidual(depth_in, 8),
+        ])
 
         self.conv_layers = nn.Sequential(*layers)
 
         self.hidden_fc = nn.Linear(in_features=8192, out_features=256)
         self.logits_fc = nn.Linear(in_features=256, out_features=num_outputs)
         self.value_fc = nn.Linear(in_features=256, out_features=1)
-
-        torch.nn.init.zeros_(self.logits_fc.weight)
 
     def forward(self, input_dict, state, seq_lens):
         x = input_dict["obs"].float()
