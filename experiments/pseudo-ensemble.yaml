@@ -11,7 +11,7 @@ procgen-pe:
 
   config:
     env_config:
-      env_name: plunder
+      env_name: miner
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -23,26 +23,25 @@ procgen-pe:
       restrict_themes: False
       use_monochrome_assets: False
 
-    gamma: 0.999
+    gamma: 0.99
     lambda: 0.95
-    lr: 3.0e-4
+    lr: 2.5e-4
     num_sgd_iter: 3
     sgd_minibatch_size: 1024
-    train_batch_size: 8192
-    kl_coeff: 0.2
+    train_batch_size: 16384
+    kl_coeff: 0.0
     kl_target: 0.01
     vf_loss_coeff: 0.5
-    entropy_coeff: 0.0
-    entropy_coeff_schedule: [[0, 0.01], [4000000, 0.001]]
-    clip_param: 0.2
-    vf_clip_param: 0.2
+    entropy_coeff: 0.01
+    clip_param: 0.1
+    vf_clip_param: 0.1
     grad_clip: 0.5
     vf_share_layers: True
     horizon: null
     soft_horizon: False
     no_done_at_end: False
     normalize_actions: False
-    clip_rewards: 1.0
+    clip_rewards: False
     clip_actions: True
     preprocessor_pref: deepmind
     ignore_worker_failures: False
@@ -57,9 +56,9 @@ procgen-pe:
       type: "StochasticSampling"
 
     num_workers: 4
-    num_envs_per_worker: 8
+    num_envs_per_worker: 16
     rollout_fragment_length: 256
-    batch_mode: complete_episodes
+    batch_mode: truncate_episodes
     shuffle_sequences: True
 
     num_cpus_per_worker: 1

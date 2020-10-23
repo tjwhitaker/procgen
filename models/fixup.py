@@ -44,16 +44,16 @@ class FixupCNN(TorchModelV2, nn.Module):
             ])
             depth_in = depth_out
 
-        # layers.extend([
-        #     FixupResidual(depth_in, 8),
-        #     FixupResidual(depth_in, 8),
-        # ])
+        layers.extend([
+            FixupResidual(depth_in, 8),
+            FixupResidual(depth_in, 8),
+        ])
 
         self.conv_layers = nn.Sequential(*layers)
 
-        self.hidden_fc = nn.Linear(in_features=8192, out_features=512)
-        self.logits_fc = nn.Linear(in_features=512, out_features=num_outputs)
-        self.value_fc = nn.Linear(in_features=512, out_features=1)
+        self.hidden_fc = nn.Linear(in_features=8192, out_features=256)
+        self.logits_fc = nn.Linear(in_features=256, out_features=num_outputs)
+        self.value_fc = nn.Linear(in_features=256, out_features=1)
 
         torch.nn.init.zeros_(self.logits_fc.weight)
 
@@ -115,11 +115,12 @@ class FixupCNN(TorchModelV2, nn.Module):
             output = self.logits_fc(x)
             ensemble_logits = [output]
 
-            for weights in self.ensemble_weights:
-                self.logits_fc.weight = nn.Parameter(
-                    weights, requires_grad=False)
+            if random() < 0.5:
+                for weights in self.ensemble_weights:
+                    self.logits_fc.weight = nn.Parameter(
+                        weights, requires_grad=False)
 
-                ensemble_logits.append(self.logits_fc(x))
+                    ensemble_logits.append(self.logits_fc(x))
 
             logits = sum(ensemble_logits)
 
@@ -130,6 +131,9 @@ class FixupCNN(TorchModelV2, nn.Module):
             dist = torch.distributions.Categorical(logits=logits)
 
             return dist.sample().cpu()
+
+    def brain_damage(self):
+        pass
 
 
 class FixupResidual(nn.Module):
