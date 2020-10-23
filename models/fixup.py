@@ -130,9 +130,6 @@ class FixupCNN(TorchModelV2, nn.Module):
 
             return dist.sample().cpu()
 
-    def brain_damage(self):
-        pass
-
 
 class FixupResidual(nn.Module):
     def __init__(self, depth, num_residual):
