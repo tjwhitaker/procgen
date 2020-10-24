@@ -35,7 +35,7 @@ class FixupCNN(TorchModelV2, nn.Module):
 
         layers = []
 
-        for depth_out in [32, 64, 64]:
+        for depth_out in [32, 64, 128]:
             layers.extend([
                 nn.Conv2d(depth_in, depth_out, 3, padding=1),
                 nn.MaxPool2d(3, stride=2, padding=1),
@@ -51,7 +51,7 @@ class FixupCNN(TorchModelV2, nn.Module):
 
         self.conv_layers = nn.Sequential(*layers)
 
-        self.hidden_fc = nn.Linear(in_features=4096, out_features=256)
+        self.hidden_fc = nn.Linear(in_features=8192, out_features=256)
         self.logits_fc = nn.Linear(in_features=256, out_features=num_outputs)
         self.value_fc = nn.Linear(in_features=256, out_features=1)
 
