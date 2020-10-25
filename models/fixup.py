@@ -55,9 +55,11 @@ class FixupCNN(TorchModelV2, nn.Module):
         self.logits_fc = nn.Linear(in_features=256, out_features=num_outputs)
         self.value_fc = nn.Linear(in_features=256, out_features=1)
 
+        torch.nn.init.zeros_(self.logits_fc.weight)
+
     def forward(self, input_dict, state, seq_lens):
         x = input_dict["obs"].float()
-        x = x / 255.0
+        # x = x / 255.0
         x = x.permute(0, 3, 1, 2)
         x = x.contiguous()
         x = self.conv_layers(x)

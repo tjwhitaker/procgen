@@ -11,7 +11,7 @@ procgen-pe:
 
   config:
     env_config:
-      env_name: miner
+      env_name: bigfish
       num_levels: 0
       start_level: 0
       paint_vel_info: False
@@ -23,7 +23,7 @@ procgen-pe:
       restrict_themes: False
       use_monochrome_assets: False
 
-    gamma: 0.99
+    gamma: 0.999
     lambda: 0.95
     lr: 2.5e-4
     num_sgd_iter: 3
@@ -32,8 +32,8 @@ procgen-pe:
     kl_coeff: 0.0
     kl_target: 0.01
     vf_loss_coeff: 0.5
-    entropy_coeff: 0.01
-    clip_param: 0.2
+    entropy_coeff: 0.001
+    clip_param: 0.1
     vf_clip_param: 0.2
     grad_clip: 0.5
     vf_share_layers: True
@@ -65,9 +65,3 @@ procgen-pe:
     num_gpus_per_worker: 0.1
     num_cpus_for_driver: 1
     num_gpus: 0.6
-
-    observation_filter: "NoFilter"
-    synchronize_filters: False
-    compress_observations: False
-    timesteps_per_iteration: 0
-    seed: null
