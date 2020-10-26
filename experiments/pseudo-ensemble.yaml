@@ -25,18 +25,16 @@ procgen-pe:
 
     gamma: 0.99
     lambda: 0.95
-    lr: 2.5e-4
+    lr: 2.0e-4
     num_sgd_iter: 3
     sgd_minibatch_size: 1024
     train_batch_size: 8192
     kl_coeff: 0.0
     kl_target: 0.01
-    vf_loss_coeff: 1.0
+    vf_loss_coeff: 0.5
     entropy_coeff: 0.01
-    entropy_coeff_schedule: [[0, 0.01], [4000000, 0.01], [8000000, 0.0]]
-    grad_clip: 0.5
     clip_param: 0.1
-    vf_clip_param: 10.0
+    vf_clip_param: 1.0
     vf_share_layers: True
     horizon: null
     soft_horizon: False
@@ -56,8 +54,6 @@ procgen-pe:
     exploration_config:
       type: "StochasticSampling"
 
-    observation_filter: NoFilter
-
     num_workers: 4
     num_envs_per_worker: 16
     rollout_fragment_length: 128
@@ -68,3 +64,9 @@ procgen-pe:
     num_gpus_per_worker: 0.1
     num_cpus_for_driver: 1
     num_gpus: 0.6
+
+    observation_filter: "NoFilter"
+    synchronize_filters: False
+    compress_observations: False
+    timesteps_per_iteration: 0
+    seed: null
