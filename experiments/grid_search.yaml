@@ -3,7 +3,7 @@ procgen-pe:
   run: PseudoEnsemble
   disable_evaluation_worker: True
   stop:
-    timesteps_total: 8000000
+    timesteps_total: 1000000
 
   checkpoint_freq: 100
   checkpoint_at_end: True
@@ -23,20 +23,26 @@ procgen-pe:
       restrict_themes: False
       use_monochrome_assets: False
 
-    gamma: 0.99
+    gamma:
+      grid_search: [0.99, 0.999]
     lambda: 0.95
-    lr: 2.5e-4
+    lr:
+      grid_search: [5.0e-4, 3.0e-4, 2.0e-4]
     num_sgd_iter: 3
-    sgd_minibatch_size: 1024
-    train_batch_size: 8192
-    kl_coeff: 0.0
+    sgd_minibatch_size:
+      grid_search: [1024, 2048]
+    train_batch_size: 16384
+    kl_coeff:
+      grid_search: [1.0, 0.0]
     kl_target: 0.01
-    vf_loss_coeff: 1.0
+    vf_loss_coeff:
+      grid_search: [0.25, 0.5, 1.0]
     entropy_coeff: 0.01
     entropy_coeff_schedule: [[0, 0.01], [4000000, 0.01], [8000000, 0.0]]
-    grad_clip: 0.5
-    clip_param: 0.1
-    vf_clip_param: 10.0
+    clip_param:
+      grid_search: [0.1, 0.2]
+    vf_clip_param:
+      grid_search: [0.1, 0.2, 10.0]
     vf_share_layers: True
     horizon: null
     soft_horizon: False
@@ -58,13 +64,13 @@ procgen-pe:
 
     observation_filter: NoFilter
 
-    num_workers: 4
-    num_envs_per_worker: 16
-    rollout_fragment_length: 128
+    num_workers: 2
+    num_envs_per_worker: 32
+    rollout_fragment_length: 256
     batch_mode: truncate_episodes
     shuffle_sequences: True
 
     num_cpus_per_worker: 1
     num_gpus_per_worker: 0.1
     num_cpus_for_driver: 1
-    num_gpus: 0.6
+    num_gpus: 0.8
