@@ -23,18 +23,20 @@ procgen-pe:
       restrict_themes: False
       use_monochrome_assets: False
 
-    gamma: 0.99
+    gamma: 0.995
     lambda: 0.95
-    lr: 2.0e-4
+    lr: 3.25e-4
     num_sgd_iter: 3
     sgd_minibatch_size: 1024
-    train_batch_size: 16384
+    train_batch_size: 8192
     kl_coeff: 0.0
     kl_target: 0.01
     vf_loss_coeff: 0.5
     entropy_coeff: 0.01
-    clip_param: 0.1
-    vf_clip_param: 1.0
+    entropy_coeff_schedule: [[0, 0.01], [8000000, 0.0]]
+    clip_param: 0.2
+    vf_clip_param: 0.2
+    grad_clip: 0.5
     vf_share_layers: True
     horizon: null
     soft_horizon: False
@@ -55,7 +57,7 @@ procgen-pe:
       type: "StochasticSampling"
 
     num_workers: 4
-    num_envs_per_worker: 16
+    num_envs_per_worker: 8
     rollout_fragment_length: 256
     batch_mode: truncate_episodes
     shuffle_sequences: True
