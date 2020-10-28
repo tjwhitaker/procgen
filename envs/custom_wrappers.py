@@ -171,13 +171,13 @@ class RewardFilter:
 class NormalizeReward(gym.Wrapper):
     def __init__(self, env, rollout):
         super(NormalizeReward, self).__init__(env)
+        self.rollout = rollout
         self.reward_filter = Identity()
         self.reward_filter = RewardFilter(
-            self.reward_filter, shape=(), gamma=0.999)
+            self.reward_filter, shape=(), gamma=0.99)
         self.total_true_reward = 0.0
 
     def reset(self):
-        # Reset the state, and the running total reward
         start_state = self.env.reset()
         self.total_true_reward = 0.0
         self.reward_filter.reset()
@@ -187,9 +187,11 @@ class NormalizeReward(gym.Wrapper):
     def step(self, action):
         state, reward, done, info = self.env.step(action)
         self.total_true_reward += reward
-        _reward = self.reward_filter(reward)
 
-        return state, _reward, done, info
+        if not self.rollout:
+            reward = self.reward_filter(reward)
+
+        return state, reward, done, info
 
 #######################################################
 #######################################################
