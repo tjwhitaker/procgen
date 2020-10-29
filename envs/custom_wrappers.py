@@ -174,7 +174,7 @@ class NormalizeReward(gym.Wrapper):
         self.rollout = rollout
         self.reward_filter = Identity()
         self.reward_filter = RewardFilter(
-            self.reward_filter, shape=(), gamma=0.99)
+            self.reward_filter, shape=(), gamma=0.999)
         self.total_true_reward = 0.0
 
     def reset(self):
