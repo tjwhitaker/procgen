@@ -35,7 +35,7 @@ class FixupCNN(TorchModelV2, nn.Module):
 
         layers = []
 
-        for depth_out in [32, 64, 64]:
+        for depth_out in [32, 64, 128]:
             layers.extend([
                 nn.Conv2d(depth_in, depth_out, 3, padding=1),
                 nn.MaxPool2d(3, stride=2, padding=1),
@@ -56,9 +56,9 @@ class FixupCNN(TorchModelV2, nn.Module):
         self.value_fc = nn.Linear(in_features=256, out_features=1)
 
         # Initialize all dense layers with orthogonal scheme
-        # torch.nn.init.orthogonal_(self.hidden_fc.weight, gain=(2**0.5))
-        # torch.nn.init.orthogonal_(self.logits_fc.weight)
-        # torch.nn.init.orthogonal_(self.value_fc.weight)
+        torch.nn.init.orthogonal_(self.hidden_fc.weight, gain=(2**0.5))
+        torch.nn.init.orthogonal_(self.logits_fc.weight)
+        torch.nn.init.orthogonal_(self.value_fc.weight)
 
     def forward(self, input_dict, state, seq_lens):
         x = input_dict["obs"].float()
