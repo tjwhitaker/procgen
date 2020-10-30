@@ -208,7 +208,7 @@ def create_env(config):
     env = DiffStack(env, 2)
     # env = FrameStack(env, 4)
     # env = ShapeReward(env, rollout)
-    # env = NormalizeReward(env, rollout)
+    env = NormalizeReward(env, rollout)
 
     return env
 
