@@ -35,7 +35,7 @@ class FixupCNN(TorchModelV2, nn.Module):
 
         layers = []
 
-        for depth_out in [32, 64, 128]:
+        for depth_out in [32, 64, 96]:
             layers.extend([
                 nn.Conv2d(depth_in, depth_out, 3, padding=1),
                 nn.MaxPool2d(3, stride=2, padding=1),
@@ -55,10 +55,14 @@ class FixupCNN(TorchModelV2, nn.Module):
         self.logits_fc = nn.Linear(in_features=256, out_features=num_outputs)
         self.value_fc = nn.Linear(in_features=256, out_features=1)
 
-        # Initialize all dense layers with orthogonal scheme
-        # torch.nn.init.orthogonal_(self.hidden_fc.weight, gain=(2**0.5))
-        # torch.nn.init.orthogonal_(self.logits_fc.weight)
-        # torch.nn.init.orthogonal_(self.value_fc.weight)
+        # Initialize hidden layers with orthogonal scheme from baselines
+        torch.nn.init.orthogonal_(self.hidden_fc.weight, gain=(2**0.5))
+        torch.nn.init.orthogonal_(self.logits_fc.weight, gain=0.01)
+        torch.nn.init.orthogonal_(self.value_fc.weight, gain=1.0)
+
+        torch.nn.init.zeros_(self.hidden_fc.bias)
+        torch.nn.init.zeros_(self.logits_fc.bias)
+        torch.nn.init.zeros_(self.value_fc.bias)
 
     def forward(self, input_dict, state, seq_lens):
         x = input_dict["obs"].float()
@@ -141,10 +145,13 @@ class FixupResidual(nn.Module):
         super().__init__()
         self.conv1 = nn.Conv2d(depth, depth, 3, padding=1, bias=False)
         self.conv2 = nn.Conv2d(depth, depth, 3, padding=1, bias=False)
+
         for p in self.conv1.parameters():
             p.data.mul_(1 / math.sqrt(num_residual))
+
         for p in self.conv2.parameters():
             p.data.zero_()
+
         self.bias1 = nn.Parameter(torch.zeros([depth, 1, 1]))
         self.bias2 = nn.Parameter(torch.zeros([depth, 1, 1]))
         self.bias3 = nn.Parameter(torch.zeros([depth, 1, 1]))

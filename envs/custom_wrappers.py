@@ -205,8 +205,8 @@ def create_env(config):
     rollout = config.pop("rollout")
 
     env = ProcgenEnvWrapper(config)
-    env = DiffStack(env, 2)
-    # env = FrameStack(env, 4)
+    # env = DiffStack(env, 2)
+    env = FrameStack(env, 2)
     # env = ShapeReward(env, rollout)
     env = NormalizeReward(env, rollout)
 
